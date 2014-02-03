@@ -918,7 +918,7 @@ your need to perform them manually:
   
   ``[DB_NAME]`` and ``[USER_NAME]`` are the names you choose for your DVN database and database user. These, together with the password you have assigned, will be used in the Glassfish configuration so that the application can talk to the database.
 
-2. Before Glassfish can be configured for the DVN app, the Postgres driver needs to be installed in the <GLASSFISH ROOT>/lib directory. We supply a version of the driver known to work with the DVN in the dvninstall/pgdriver directory of the Installer bundle. (This is the :ref:`"What does the Installer do?" <what-does-the-intstaller-do>` section of this appendix) An example of the installed location of the driver:
+2. Before Glassfish can be configured for the DVN app, the Postgres driver needs to be installed in the <GLASSFISH ROOT>/lib directory. We supply a version of the driver known to work with the DVN in the dvninstall/pgdriver directory of the Installer bundle. (This is the :ref:`"What does the Installer do?" <what-does-the-intstaller-do>` section) An example of the installed location of the driver:
 
   ``/usr/local/glassfish/lib/postgresql-8.3-603.jdbc4.jar``
 
