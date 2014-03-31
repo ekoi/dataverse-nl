@@ -494,4 +494,33 @@
         <location>/faces/NotFoundPage.xhtml</location>
     </error-page>
  -->
+ 
+ 
+ <!-- OIOSAML Settings -->
+    <!--  context-param>
+        <param-name>oiosaml-j.name</param-name>
+        <param-value>Dataverse</param-value>
+    </context-param>
+    <listener>
+        <listener-class>dk.itst.oiosaml.sp.service.session.SessionDestroyListener</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>SAMLDispatcherServlet</servlet-name>
+        <servlet-class>dk.itst.oiosaml.sp.service.DispatcherServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SAMLDispatcherServlet</servlet-name>
+        <url-pattern>/saml/*</url-pattern>
+    </servlet-mapping>
+    <filter>
+        <filter-name>SamlLoginFilter</filter-name>
+        <filter-class>dk.itst.oiosaml.sp.service.SPFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SamlLoginFilter</filter-name>
+        <url-pattern>/faces/login/SamlLoginPage.xhtml</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping -->
+<!-- END OIOSAML Settings -->
 </web-app>

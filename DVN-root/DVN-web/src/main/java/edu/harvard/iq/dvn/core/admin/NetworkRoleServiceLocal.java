@@ -48,6 +48,8 @@ public interface NetworkRoleServiceLocal extends java.io.Serializable  {
     
     public NetworkRoleRequest findCreatorRequest(Long userId);
     
-    public NetworkRole  getCreatorRole();     
-    
+    public NetworkRole getCreatorRole();     
+
+    public NetworkRole getNetworkAdminRole();     
+
 }

@@ -217,6 +217,17 @@ public class UserServiceBean implements UserServiceLocal {
         }
     }
     
+    public void makeNetworkAdmin (Long userId) {
+        VDCUser user = em.find(VDCUser.class, userId);
+        VDCNetwork vdcNetwork = vdcNetworkService.find();
+        // If the user already has a networkRole, then he is already a creator or networkAdmin,
+        // so don't need to change the role.
+        if (user.getNetworkRole()==null) {
+            user.setNetworkRole(networkRoleService.getNetworkAdminRole());
+            mailService.sendNetworkAdminAccountNotification(vdcNetwork.getContactEmail(), user.getUserName());   
+        }
+    }
+    
     public void makeCreator(Long userId) {
         VDCUser user = em.find(VDCUser.class, userId);
         VDCNetwork vdcNetwork = vdcNetworkService.find();
@@ -286,9 +297,8 @@ public class UserServiceBean implements UserServiceLocal {
      public boolean hasUserContributed(Long userId) {
        String queryStr = "select count(*) from versioncontributor where contributor_id = " + userId;
         Query query = em.createNativeQuery(queryStr);
-    
-        Long count = (Long) query.getSingleResult();
-        
+
+        Long count = (Long) ((Vector) query.getSingleResult()).get(0);
         System.out.println("count is "+count+", type "+count.getClass().getName());
         if (count.compareTo(new Long(0))>0) {
             return true;
