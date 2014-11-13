@@ -126,7 +126,8 @@ public class UserServiceBean implements UserServiceLocal {
 
     
     public VDCUser findByEmail(String email) {
-        String query = "SELECT u from VDCUser u where u.email = :email ";
+    	//enforce email in lower case
+        String query = "SELECT u from VDCUser u where lower(u.email) = :email ";
         query += " and u.active=true ";
         
         VDCUser user = null;
