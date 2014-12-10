@@ -126,7 +126,8 @@ public class UserServiceBean implements UserServiceLocal {
 
     
     public VDCUser findByEmail(String email) {
-        String query = "SELECT u from VDCUser u where u.email = :email ";
+    	//enforce email in lower case
+        String query = "SELECT u from VDCUser u where lower(u.email) = :email ";
         query += " and u.active=true ";
         
         VDCUser user = null;
@@ -214,6 +215,17 @@ public class UserServiceBean implements UserServiceLocal {
         if (user.getVDCRole(vdc)==null) {
             addVdcRole(userId, vdcId, RoleServiceLocal.CONTRIBUTOR);
             mailService.sendContributorAccountNotification(vdc.getContactEmail(), user.getUserName(), vdc.getName());
+        }
+    }
+    
+    public void makeNetworkAdmin (Long userId) {
+        VDCUser user = em.find(VDCUser.class, userId);
+        VDCNetwork vdcNetwork = vdcNetworkService.find();
+        // If the user already has a networkRole, then he is already a creator or networkAdmin,
+        // so don't need to change the role.
+        if (user.getNetworkRole()==null) {
+            user.setNetworkRole(networkRoleService.getNetworkAdminRole());
+            mailService.sendNetworkAdminAccountNotification(vdcNetwork.getContactEmail(), user.getUserName());   
         }
     }
     
