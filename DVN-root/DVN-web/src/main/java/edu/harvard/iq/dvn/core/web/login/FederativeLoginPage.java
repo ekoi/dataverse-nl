@@ -151,7 +151,8 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
 			} catch (IOException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage());
 			}
-            errMessage = "No assertion; this stage should never be reached; check the Shibboleth configuration";
+            errMessage = "We are sorry, but something went wrong while processing the authentication results. "
+            		+ "DANS is aware of this and is trying to resolve it. Could you try logging in again using a different browser?";
             loginFailed = true;
             LOGGER.log(Level.SEVERE, errMessage);
         }
