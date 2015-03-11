@@ -585,7 +585,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
                 if (USERID_PREFIX != null) {
                     base = USERID_PREFIX + base;
                 }
-                String tuid = stripNonAlphaNum(base);
+                String tuid = base; //stripNonAlphaNum(base);
                 String xuid = tuid;
                 LOGGER.log(Level.INFO, "Base user id {0}.", tuid);
                 int n = 0;
