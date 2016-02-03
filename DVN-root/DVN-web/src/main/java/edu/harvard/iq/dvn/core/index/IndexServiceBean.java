@@ -203,7 +203,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
     @Timeout
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void handleTimeout(javax.ejb.Timer timer) {
-        System.out.println("in handleTimeout, timer = "+timer.getInfo());
+        logger.fine("in handleTimeout, timer = "+timer.getInfo());
         
         try {
             // read-only mode check:
@@ -463,13 +463,12 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
                     } catch (IOException ex) {
                         ioProblem = true;
                         ioProblemCount++;
-                        Logger.getLogger(IndexServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+                        logger.log(Level.SEVERE, null, ex);
                     }
                 }
             } catch (EJBException e) {
                 if (e.getCause() instanceof IllegalArgumentException) {
-                    System.out.println("Study id " + elem.longValue() + " not found");
-                    e.printStackTrace();
+                    logger.log(Level.WARNING, "Study id " + elem.longValue() + " not found", e);
                 } else {
                     throw e;
                 }
@@ -835,8 +834,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
                 deleteDocument(elem.longValue());
             } catch (EJBException e) {
                 if (e.getCause() instanceof IllegalArgumentException) {
-                    System.out.println("Study id " + elem.longValue() + " not found");
-                    e.printStackTrace();
+                    logger.log(Level.WARNING, "Study id " + elem.longValue() + " not found", e);
                 } else {
                     throw e;
                 }
@@ -1077,7 +1075,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
             try {
                 addDocument(study.getId().longValue());
             } catch (IOException ex) {
-                Logger.getLogger(IndexServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, null, ex);
                 ioProblemCount++;
                 ioProblem = true;
             }
