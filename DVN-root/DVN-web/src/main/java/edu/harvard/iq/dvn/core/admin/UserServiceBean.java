@@ -271,7 +271,7 @@ public class UserServiceBean implements UserServiceLocal {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void clearAgreedTermsOfUse() {
-        logger.fine("IN clearAgreedTermsOfUse");
+        logger.info("Clearing all agreements to Terms of Use!");
         em.createQuery("update VDCUser u set u.agreedTermsOfUse=false "//where " 
                 // " u.networkRole is null or "
                 //  +" u.networkRole.name <> '"
