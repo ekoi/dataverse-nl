@@ -61,6 +61,7 @@ import javax.inject.Named;
 @Named("TermsOfUsePage")
 @ViewScoped
 public class TermsOfUsePage extends VDCBaseBean {
+    private static final Logger logger = Logger.getLogger(TermsOfUsePage.class.getCanonicalName());
     @EJB private StudyServiceLocal studyService;
     @EJB private VDCNetworkServiceLocal vdcNetworkService;
     @EJB private GuestBookResponseServiceBean guestBookResponseServiceBean;
@@ -195,7 +196,7 @@ public class TermsOfUsePage extends VDCBaseBean {
         guestBookResponse.setGuestBookQuestionnaire(study.getOwner().getGuestBookQuestionnaire());
         guestBookResponse.setStudy(study);
                 Long version = study.getVersion();
-                System.out.print("version " + version);
+                logger.fine("version " + version);
         guestBookResponse.setResponseTime(new Date());
 
         if (study.getOwner().getGuestBookQuestionnaire().getCustomQuestions() != null && !study.getOwner().getGuestBookQuestionnaire().getCustomQuestions().isEmpty()) {
