@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJBException;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
@@ -53,6 +54,7 @@ import javax.persistence.PersistenceContextType;
 @Stateful
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class EditStudyFilesServiceBean implements edu.harvard.iq.dvn.core.study.EditStudyFilesService {
+    private static final Logger logger = Logger.getLogger(EditStudyFilesServiceBean.class.getCanonicalName());
     @EJB StudyServiceLocal studyService;
     @EJB VDCNetworkServiceLocal vdcNetworkService;
     @EJB GNRSServiceLocal gnrsService;
@@ -131,7 +133,7 @@ public class EditStudyFilesServiceBean implements edu.harvard.iq.dvn.core.study.
 
 
         } catch(EJBException e) {
-            System.out.println("EJBException "+e.getMessage()+" saving studyVersion "+studyVersion.getId()+" edited by " + user.getUserName() + " at "+ new Date().toString());
+            logger.severe("EJBException "+e.getMessage()+" saving studyVersion "+studyVersion.getId()+" edited by " + user.getUserName() + " at "+ new Date().toString());
             e.printStackTrace();
             throw e;
 
