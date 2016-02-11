@@ -60,9 +60,19 @@ public class RuleServiceBean implements RuleServiceLocal {
 
 
 	@Override
-	public Rule findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Rule findRuleById(Long id) {
+		return (Rule) em.createQuery("select object(o) from Rule as o where o.id=" + id).getSingleResult();
 	}
+
+//	@Override
+//	public List<RuleGoal> findRuleGoalsByRuleId(long id) {
+//		return (Rule) em.createQuery("select object(o) from Rule as o").getSingleResult();
+//	}
+//
+//	@Override
+//	public List<RuleCondition> findRuleConditionsByRuleId(long id) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
    
 }

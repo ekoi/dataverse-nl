@@ -39,8 +39,10 @@ import javax.ejb.Local;
 public interface RuleServiceLocal extends java.io.Serializable  {
    
     public List<Rule> findAll();
-    
-    public Rule findById(Long id);
+    public Rule findRuleById(Long id);
+//    public List<RuleGoal> findRuleGoalsByRuleId(long id);
+//    public List<RuleCondition> findRuleConditionsByRuleId(long id);
+     
   
     
     
