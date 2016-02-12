@@ -25,6 +25,7 @@
  */
 package nl.knaw.dans.dataverse;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,12 +37,13 @@ import javax.persistence.ManyToOne;
  *
  * @author Eko Indarto
  */
-@Entity
+@Entity(name="rule_condition")
 public class RuleCondition implements java.io.Serializable  {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = -3345859427256966912L;
+	@Column(name="attribute_name")
 	private String attributename;
 	private String pattern;
 	

@@ -25,24 +25,36 @@
  */
 package nl.knaw.dans.dataverse;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
+import edu.harvard.iq.dvn.core.admin.Role;
+import edu.harvard.iq.dvn.core.study.StudyFile;
+import edu.harvard.iq.dvn.core.study.StudyLock;
 
 /**
  *
  * @author Eko Indarto
  */
-@Entity
+@Entity(name="rule_goal")
 public class RuleGoal implements java.io.Serializable  {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = -3345859427259666912L;
-	private String dvnaliases;
+	@Column(name="dvn_alias")
+	private String dvnAlias;
+	
+	@ManyToOne
+    @JoinColumn(nullable=false)
+    private Role role;    
 	
 	/**
      * Holds value of property rule.
@@ -67,12 +79,12 @@ public class RuleGoal implements java.io.Serializable  {
         this.id = id;
     }
 
-	public String getDvnaliases() {
-		return dvnaliases;
+	public String getDvnAlias() {
+		return dvnAlias;
 	}
 
-	public void setDvnaliases(String dvnaliases) {
-		this.dvnaliases = dvnaliases;
+	public void setDvnAliases(String dvnAlias) {
+		this.dvnAlias = dvnAlias;
 	}
 
 	public Rule getRule() {
@@ -81,6 +93,14 @@ public class RuleGoal implements java.io.Serializable  {
 
 	public void setRule(Rule rule) {
 		this.rule = rule;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 	public int hashCode() {

@@ -28,6 +28,7 @@ package nl.knaw.dans.dataverse;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -44,7 +45,9 @@ public class Rule implements java.io.Serializable  {
 	 * 
 	 */
 	private static final long serialVersionUID = -3345859427256966912L;
-	private String name;
+	@Column(name="org_name")
+	private String orgName;
+	
 	private String description;
     
     
@@ -88,12 +91,12 @@ public class Rule implements java.io.Serializable  {
     
    
 
-	public String getName() {
-		return name;
+	public String getOrgName() {
+		return orgName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
 	}
 
 	public String getDescription() {

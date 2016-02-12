@@ -64,6 +64,18 @@ public class RuleServiceBean implements RuleServiceLocal {
 		return (Rule) em.createQuery("select object(o) from Rule as o where o.id=" + id).getSingleResult();
 	}
 
+	@Override
+	public Rule fineRuleByConditions(RuleCondition rc) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Rule> findRuleByOrgName(String orgName) {
+		return em.createQuery("select object(o) from Rule as o where o.orgName='" + orgName+ "'").getResultList();
+	}
+	
+
 //	@Override
 //	public List<RuleGoal> findRuleGoalsByRuleId(long id) {
 //		return (Rule) em.createQuery("select object(o) from Rule as o").getSingleResult();

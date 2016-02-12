@@ -40,8 +40,11 @@ public interface RuleServiceLocal extends java.io.Serializable  {
    
     public List<Rule> findAll();
     public Rule findRuleById(Long id);
+    public List<Rule> findRuleByOrgName(String orgName);
+    
 //    public List<RuleGoal> findRuleGoalsByRuleId(long id);
 //    public List<RuleCondition> findRuleConditionsByRuleId(long id);
+    public Rule fineRuleByConditions(RuleCondition rc);
      
   
     
