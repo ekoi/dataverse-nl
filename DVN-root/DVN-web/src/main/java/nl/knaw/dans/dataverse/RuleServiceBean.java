@@ -75,16 +75,5 @@ public class RuleServiceBean implements RuleServiceLocal {
 		return em.createQuery("select object(o) from Rule as o where o.orgName='" + orgName+ "'").getResultList();
 	}
 	
-
-//	@Override
-//	public List<RuleGoal> findRuleGoalsByRuleId(long id) {
-//		return (Rule) em.createQuery("select object(o) from Rule as o").getSingleResult();
-//	}
-//
-//	@Override
-//	public List<RuleCondition> findRuleConditionsByRuleId(long id) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
    
 }

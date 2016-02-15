@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import nl.knaw.dans.dataverse.Rule;
 import nl.knaw.dans.dataverse.RuleCondition;
+import nl.knaw.dans.dataverse.RuleExecutionSet;
 import nl.knaw.dans.dataverse.RuleGoal;
 import nl.knaw.dans.dataverse.RuleServiceLocal;
 import edu.harvard.iq.dvn.core.admin.EditUserService;
@@ -122,57 +123,7 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
 
     }
     
-    public void setUserRole() {
-    	LOGGER.log(Level.INFO, "Rule Checks");
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-        Object o = session.getAttribute(FederativeLoginPage.SHIB_PROPS_SESSION);
-        if (o != null && o instanceof Map) {
-        	Map<String, String> shibProps = (Map<String, String>)o;
-        	String orgAttrVal = shibProps.get(FederativeLoginPage.ATTR_NAME_ORG);
-        	if (orgAttrVal == null || orgAttrVal.trim().equals("")) {
-        		LOGGER.log(Level.SEVERE, "No organization found.");
-        	} else {
-        		//Example from VU: 
-        		//shibProps ("schacHomeOrganization","vu.nl"), ("entitlement","urn:x-surfnet:dans.knaw.nl:dataversenl:role:dataset-creator")
-        		//the "vu.nl" as Rule name and "entitlement" is the RuleCondition
-        		List<Rule> ruleList = ruleService.findRuleByOrgName(orgAttrVal);
-        		if (ruleList == null || ruleList.isEmpty()) {
-        			LOGGER.log(Level.INFO, "No rule is implemented for " + orgAttrVal);
-        		} else {
-        			Rule searchedRule = null;
-        			for (Rule rule : ruleList) {
-        				Collection<RuleCondition> rcList = rule.getRuleCondition();
-        				boolean ruleconditionmatch=true;
-        				for (RuleCondition rc : rcList) {
-        					//Ex: rc.getAttributename() = entitlement (from the DB, column attribute_name)
-        					// rc.getPattern() = urn:x-surfnet:dans.knaw.nl:dataversenl:role:dataset-creator (from the DB, column pattern)
-        					String attrValFromShib = shibProps.get(rc.getAttributename());
-        					if (!attrValFromShib.equals(rc.getPattern())) {
-        						ruleconditionmatch=false;
-        						break;
-        					}
-        				}
-        				if (ruleconditionmatch)
-        					searchedRule = rule;
-        			}
-        			if (searchedRule == null) {
-        				//No rule 
-        				LOGGER.log(Level.INFO, "No rule set for organization '" + orgAttrVal + "'");
-        			} else {
-        				Collection<RuleGoal> rgList = searchedRule.getRuleGoal();
-        				for (RuleGoal rg:rgList) {
-        					String dvnAlias = rg.getDvnAlias();
-        					VDC vdc = vdcService.findByAlias(dvnAlias);
-        					userService.addVdcRole(user.getId(), vdc.getId(), rg.getRole().getName());
-        					LOGGER.log(Level.INFO, "'" +rg.getRole().getName() + "' role is assigned to user '" + user.getUserName() + "' for dvn alias '" + dvnAlias + "'.");
-        				}
-        			}
-        		}
-        	}
-        	
-        } else 
-        	LOGGER.log(Level.SEVERE, "No shib props in the session");
-    }
+    
     
     public String getUsername() {
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
@@ -410,7 +361,8 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
 	                msg.setMessageText("User account created successfully.");
 	                msg.setStyleClass("successMessage");
 	                getRequestMap().put("statusMessage", msg);
-	                setUserRole();
+	                RuleExecutionSet res = new RuleExecutionSet();
+	                res.setUserRole(user);
 	                forwardPage = "viewAccount";
 	            }    
 	            
