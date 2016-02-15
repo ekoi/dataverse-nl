@@ -9,10 +9,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
-
 import edu.harvard.iq.dvn.core.admin.UserServiceLocal;
 import edu.harvard.iq.dvn.core.admin.VDCUser;
 import edu.harvard.iq.dvn.core.vdc.VDC;
@@ -25,16 +21,20 @@ import edu.harvard.iq.dvn.core.web.login.FederativeLoginPage;
  */
 public class RuleExecutionSet {
 	private final static Logger LOGGER = Logger.getLogger(RuleExecutionSet.class.getPackage().getName());
-	@EJB RuleServiceLocal ruleService;
-	@EJB VDCServiceLocal vdcService;
-	@EJB UserServiceLocal userService;
+	RuleServiceLocal ruleService;
+	VDCServiceLocal vdcService;
+	UserServiceLocal userService;
+	
+	public RuleExecutionSet(RuleServiceLocal ruleService,  VDCServiceLocal vdcService, UserServiceLocal userService) {
+		this.ruleService = ruleService;
+		this.vdcService = vdcService;
+		this.userService = userService;
+	}
 
-	public void setUserRole(VDCUser user) {
+	public void setUserRole(Map<String, String> shibProps, VDCUser user) {
     	LOGGER.log(Level.INFO, "Rule Checks");
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-        Object o = session.getAttribute(FederativeLoginPage.SHIB_PROPS_SESSION);
-        if (o != null && o instanceof Map) {
-        	Map<String, String> shibProps = (Map<String, String>)o;
+        
+        	
         	String orgAttrVal = shibProps.get(FederativeLoginPage.ATTR_NAME_ORG);
         	if (orgAttrVal == null || orgAttrVal.trim().equals("")) {
         		LOGGER.log(Level.SEVERE, "No organization found.");
@@ -57,8 +57,7 @@ public class RuleExecutionSet {
         		}
         	}
         	
-        } else 
-        	LOGGER.log(Level.SEVERE, "No shib props in the session");
+        
     }
 
 	private Rule getRule(Map<String, String> shibProps, List<Rule> ruleList) {

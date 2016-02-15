@@ -361,8 +361,14 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
 	                msg.setMessageText("User account created successfully.");
 	                msg.setStyleClass("successMessage");
 	                getRequestMap().put("statusMessage", msg);
-	                RuleExecutionSet res = new RuleExecutionSet();
-	                res.setUserRole(user);
+	                HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+	                Object o = session.getAttribute(FederativeLoginPage.SHIB_PROPS_SESSION);
+	                if (o != null && o instanceof Map) {
+	                	Map<String, String> shibProps = (Map<String, String>)o;
+	                	RuleExecutionSet res = new RuleExecutionSet(ruleService,  vdcService, userService);
+	                	res.setUserRole(shibProps, user);
+	                } else 
+	                	LOGGER.log(Level.SEVERE, "No shib props in the session");
 	                forwardPage = "viewAccount";
 	            }    
 	            
