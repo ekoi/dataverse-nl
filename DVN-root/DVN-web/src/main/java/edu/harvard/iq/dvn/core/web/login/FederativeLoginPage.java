@@ -63,8 +63,9 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     private String ATTR_NAME_PREFIX = "prefix";
     private String ATTR_NAME_GIVENNAME = "givenName";
     private String ATTR_NAME_ROLE = "eduPersonAffiliation";
-    private String ATTR_NAME_ORG = "schacHomeOrganization";
+    public static final String ATTR_NAME_ORG = "schacHomeOrganization";
     private String ATTR_NAME_PRINCIPAL = "eduPersonPrincipalName";
+    public static final String ATTR_NAME_ENTITLEMENT = "entitlement";
     
     /* Shibboleth attributes */
     private String SHIB_ATTR_NAME_EMAIL = "Shib_email";
@@ -74,6 +75,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     private String SHIB_ATTR_NAME_ROLE = "Shib_affiliation";//"eduPersonAffiliation";
     private String SHIB_ATTR_NAME_ORG = "Shib_HomeOrg";
     private String SHIB_ATTR_NAME_PRINCIPAL = "Shib_eduPersonPN";
+    private String SHIB_ATTR_NAME_ENTITLEMENT = "Shib_entitlement";
     
     private String ACL_ADMIN = null;
     private String ACL_CREATOR = null;
@@ -85,7 +87,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     private String USERID_PREFIX = "";
     private HashMap userdata = new HashMap();
     private Map<String, String> shibProps;
-    private String SHIB_PROPS_SESSION = "shibPropsSession";
+    public static final String SHIB_PROPS_SESSION = "shibPropsSession";
 
     /**
      * <p>Callback method that is called whenever a page is navigated to,
@@ -677,6 +679,10 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     	//saml.attributes.principal=urn:mace:dir:attribute-def:eduPersonPrincipalName
     	if (request.getAttribute(SHIB_ATTR_NAME_PRINCIPAL) != null) {
     		shibAtt.put(ATTR_NAME_PRINCIPAL, (String)request.getAttribute(SHIB_ATTR_NAME_PRINCIPAL));
+    	}
+    	
+    	if (request.getAttribute(SHIB_ATTR_NAME_ENTITLEMENT) != null) {
+    		shibAtt.put(ATTR_NAME_ENTITLEMENT, (String)request.getAttribute(SHIB_ATTR_NAME_ENTITLEMENT));
     	}
     	
     	//TODO: Shouldn't be here. Very ugly coding

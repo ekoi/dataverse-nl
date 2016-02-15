@@ -1,7 +1,9 @@
 // Licence info to be added
 package edu.harvard.iq.dvn.core.web.login;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,13 +14,22 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import nl.knaw.dans.dataverse.Rule;
+import nl.knaw.dans.dataverse.RuleCondition;
+import nl.knaw.dans.dataverse.RuleGoal;
+import nl.knaw.dans.dataverse.RuleServiceLocal;
 import edu.harvard.iq.dvn.core.admin.EditUserService;
+import edu.harvard.iq.dvn.core.admin.Role;
+import edu.harvard.iq.dvn.core.admin.RoleServiceLocal;
 import edu.harvard.iq.dvn.core.admin.UserServiceLocal;
 import edu.harvard.iq.dvn.core.admin.VDCUser;
 import edu.harvard.iq.dvn.core.mail.MailServiceLocal;
 import edu.harvard.iq.dvn.core.study.Study;
 import edu.harvard.iq.dvn.core.study.StudyServiceLocal;
 import edu.harvard.iq.dvn.core.util.StringUtil;
+import edu.harvard.iq.dvn.core.vdc.VDC;
+import edu.harvard.iq.dvn.core.vdc.VDCServiceLocal;
+import edu.harvard.iq.dvn.core.web.admin.OptionsPage.RoleListItem;
 import edu.harvard.iq.dvn.core.web.common.StatusMessage;
 import edu.harvard.iq.dvn.core.web.common.VDCBaseBean;
 
@@ -34,6 +45,13 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
     MailServiceLocal mailService;
     @EJB
     StudyServiceLocal studyService;
+    @EJB 
+    RoleServiceLocal roleService;
+    
+    @EJB VDCServiceLocal vdcService;
+    
+    @EJB 
+    RuleServiceLocal ruleService;
     
     private final static Logger LOGGER = Logger.getLogger(FederativeAddAccountPage.class.getPackage().getName());
     
@@ -44,6 +62,7 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
     private String email;
     private String usertype;
     private String organization;
+    private String eduPersonEntitlement;
     private String infostring;
     private VDCUser user;
     private String workflow;
@@ -52,6 +71,10 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
     private Boolean allowadmin = false;
     private Boolean createFailed = false;
     private String errMessage = "";
+    
+    private List<RoleListItem> vdcRoleList;
+    public List<RoleListItem> getVdcRoleList() {return vdcRoleList;}
+    public void setVdcRoleList(List<RoleListItem> vdcRoleList) {this.vdcRoleList = vdcRoleList;}
 
     public FederativeAddAccountPage() {
     }
@@ -62,6 +85,7 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
         if (isFromPage("FederativeAddAccountPage")) {
             editUserService = (EditUserService) sessionGet(editUserService.getClass().getName());
             user = editUserService.getUser();
+            
         } else {
             editUserService.newUser();
             sessionPut(editUserService.getClass().getName(), editUserService);
@@ -79,8 +103,6 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
             user.setEmail(usremail);
             String usrorg = this.getOrganization();
             user.setInstitution(usrorg);
-            //user.setPosition(getPosition()); 
-
             HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
             if (request.getAttribute("studyId") != null) {
                 studyId = new Long(request.getAttribute("studyId").toString());
@@ -94,9 +116,64 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
         if (studyId != null) {
             study = studyService.getStudy(studyId);
         }
+        
+        
+
 
     }
-
+    
+    public void setUserRole() {
+    	LOGGER.log(Level.INFO, "Rule Checks");
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+        Object o = session.getAttribute(FederativeLoginPage.SHIB_PROPS_SESSION);
+        if (o != null && o instanceof Map) {
+        	Map<String, String> shibProps = (Map<String, String>)o;
+        	String orgAttrVal = shibProps.get(FederativeLoginPage.ATTR_NAME_ORG);
+        	if (orgAttrVal == null || orgAttrVal.trim().equals("")) {
+        		LOGGER.log(Level.SEVERE, "No organization found.");
+        	} else {
+        		//Example from VU: 
+        		//shibProps ("schacHomeOrganization","vu.nl"), ("entitlement","urn:x-surfnet:dans.knaw.nl:dataversenl:role:dataset-creator")
+        		//the "vu.nl" as Rule name and "entitlement" is the RuleCondition
+        		List<Rule> ruleList = ruleService.findRuleByOrgName(orgAttrVal);
+        		if (ruleList == null || ruleList.isEmpty()) {
+        			LOGGER.log(Level.INFO, "No rule is implemented for " + orgAttrVal);
+        		} else {
+        			Rule searchedRule = null;
+        			for (Rule rule : ruleList) {
+        				Collection<RuleCondition> rcList = rule.getRuleCondition();
+        				boolean ruleconditionmatch=true;
+        				for (RuleCondition rc : rcList) {
+        					//Ex: rc.getAttributename() = entitlement (from the DB, column attribute_name)
+        					// rc.getPattern() = urn:x-surfnet:dans.knaw.nl:dataversenl:role:dataset-creator (from the DB, column pattern)
+        					String attrValFromShib = shibProps.get(rc.getAttributename());
+        					if (!attrValFromShib.equals(rc.getPattern())) {
+        						ruleconditionmatch=false;
+        						break;
+        					}
+        				}
+        				if (ruleconditionmatch)
+        					searchedRule = rule;
+        			}
+        			if (searchedRule == null) {
+        				//No rule 
+        				LOGGER.log(Level.INFO, "No rule set for organization '" + orgAttrVal + "'");
+        			} else {
+        				Collection<RuleGoal> rgList = searchedRule.getRuleGoal();
+        				for (RuleGoal rg:rgList) {
+        					String dvnAlias = rg.getDvnAlias();
+        					VDC vdc = vdcService.findByAlias(dvnAlias);
+        					userService.addVdcRole(user.getId(), vdc.getId(), rg.getRole().getName());
+        					LOGGER.log(Level.INFO, "'" +rg.getRole().getName() + "' role is assigned to user '" + user.getUserName() + "' for dvn alias '" + dvnAlias + "'.");
+        				}
+        			}
+        		}
+        	}
+        	
+        } else 
+        	LOGGER.log(Level.SEVERE, "No shib props in the session");
+    }
+    
     public String getUsername() {
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
         String usrUsername;
@@ -255,7 +332,8 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
         this.organization = org;
     }
     
-    public String getPosition() {
+
+	public String getPosition() {
         String role;
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
         if (session.getAttribute("usrrole") != null) {
@@ -308,50 +386,57 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
     }
 
     public String createAccount() {
-        String forwardPage = null;
-        Long contributorRequestVdcId = null;
-        String workflowValue = null;
-
-        //trying to set proper permissions
-        String workflowusertype = "user";//getUsertype();
-
-        Boolean doCreate = "user".equalsIgnoreCase(workflowusertype)
-                || "creator".equalsIgnoreCase(workflowusertype)
-                || ("admin".equalsIgnoreCase(workflowusertype) && getAllowAdmin());
-
-        if (doCreate) {
-            user.setActive(true);
-            editUserService.save();
-            LOGGER.log(Level.INFO, "Trying to create user");
-            if (StringUtil.isEmpty(workflowValue)) {
-                StatusMessage msg = new StatusMessage();
-                msg.setMessageText("User account created successfully.");
-                msg.setStyleClass("successMessage");
-                getRequestMap().put("statusMessage", msg);
-                forwardPage = "viewAccount";
-            }
-            LoginWorkflowBean loginWorkflowBean = (LoginWorkflowBean) FederativeAddAccountPage.getBean("LoginWorkflowBean");
-            loginWorkflowBean.processAddAccount(user);
-            LOGGER.log(Level.INFO, "User created (ID={0}); setting permissions", user.getId());
-
-            if ("admin".equalsIgnoreCase(workflowusertype)) {
-                LOGGER.log(Level.INFO, "User is network admin");
-                userService.makeNetworkAdmin(user.getId());
-            } else if ("creator".equalsIgnoreCase(workflowusertype)) {
-                LOGGER.log(Level.INFO, "User is dataverse creator");
-                userService.makeCreator(user.getId());
-            } else {
-                LOGGER.log(Level.INFO, "User is a standard user");
-            }
-            // Login after account creation
-            return loginWorkflowBean.processLogin(user, null);
-        } else {
-            editUserService.cancel();
-            LOGGER.log(Level.SEVERE, "Unable to create the account");
-            setCreateFailed(true);
-            setErrMessage("Your account cannot be created. Please, consult your administrator. Click <strong>Log out</strong> to log out from your federation account and return to the home page.");
-            return null;
-        }
+    	if (user == null || user.getUserName().trim().equals("")) {
+    		LOGGER.log(Level.SEVERE, "User is null or the username is empty");
+    		throw new RuntimeException("Username is empty.");
+    	} else {
+	        String forwardPage = null;
+	        Long contributorRequestVdcId = (long) 1;
+	        String workflowValue = null;
+	
+	        //trying to set proper permissions
+	        String workflowusertype = getUsertype();
+	
+	        Boolean doCreate = "user".equalsIgnoreCase(workflowusertype)
+	                || "creator".equalsIgnoreCase(workflowusertype)
+	                || ("admin".equalsIgnoreCase(workflowusertype) && getAllowAdmin());
+	
+	        if (doCreate) {
+	            user.setActive(true);
+	            editUserService.save();
+	            LOGGER.log(Level.INFO, "Trying to create user");
+	            if (StringUtil.isEmpty(workflowValue)) {
+	                StatusMessage msg = new StatusMessage();
+	                msg.setMessageText("User account created successfully.");
+	                msg.setStyleClass("successMessage");
+	                getRequestMap().put("statusMessage", msg);
+	                setUserRole();
+	                forwardPage = "viewAccount";
+	            }    
+	            
+	            LoginWorkflowBean loginWorkflowBean = (LoginWorkflowBean) FederativeAddAccountPage.getBean("LoginWorkflowBean");
+	            loginWorkflowBean.processAddAccount(user);
+	            LOGGER.log(Level.INFO, "User created (ID={0}); setting permissions", user.getId());
+	
+	            if ("admin".equalsIgnoreCase(workflowusertype)) {
+	                LOGGER.log(Level.INFO, "User is network admin");
+	                userService.makeNetworkAdmin(user.getId());
+	            } else if ("creator".equalsIgnoreCase(workflowusertype)) {
+	                LOGGER.log(Level.INFO, "User is dataverse creator");
+	                userService.makeCreator(user.getId());
+	            } else {
+	                LOGGER.log(Level.INFO, "User is a standard user");
+	            }
+	            // Login after account creation
+	            return loginWorkflowBean.processLogin(user, null);
+	        } else {
+	            editUserService.cancel();
+	            LOGGER.log(Level.SEVERE, "Unable to create the account");
+	            setCreateFailed(true);
+	            setErrMessage("Your account cannot be created. Please, consult your administrator. Click <strong>Log out</strong> to log out from your federation account and return to the home page.");
+	            return null;
+	        }
+    	}
     }
 
     public String cancel() {
@@ -385,4 +470,5 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
     public String getErrMessage() {
         return this.errMessage;
     }
+    
 }
