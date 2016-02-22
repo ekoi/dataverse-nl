@@ -16,7 +16,7 @@
    Dataverse Network - A web application to share, preserve and analyze research data.
    Developed at the Institute for Quantitative Social Science, Harvard University.
    Version 3.0.
-*/
+ */
 /*
  * UserServiceLocal.java
  *
@@ -36,11 +36,14 @@ import javax.ejb.Local;
  * @author Eko Indarto
  */
 @Local
-public interface RuleServiceLocal extends java.io.Serializable  {
-   
-    public List<Rule> findAll();
-    public Rule findRuleById(Long id);
-    public List<Rule> findRuleByOrgName(String orgName);
-    public Rule fineRuleByConditions(RuleCondition rc);
-    
+public interface RuleServiceLocal extends java.io.Serializable {
+
+	public List<Rule> findAll();
+
+	public Rule findRuleById(Long id);
+
+	public List<Rule> findRuleByOrgName(String orgName);
+
+	public Rule fineRuleByConditions(RuleCondition rc);
+
 }

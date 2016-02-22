@@ -16,7 +16,7 @@
    Dataverse Network - A web application to share, preserve and analyze research data.
    Developed at the Institute for Quantitative Social Science, Harvard University.
    Version 3.0.
-*/
+ */
 /*
  * Role.java
  *
@@ -40,32 +40,33 @@ import javax.persistence.OneToMany;
  * @author Eko Indarto
  */
 @Entity
-public class Rule implements java.io.Serializable  {
-    /**
+public class Rule implements java.io.Serializable {
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3345859427256966912L;
-	@Column(name="org_name")
+	@Column(name = "org_name")
 	private String orgName;
-	
+
 	private String description;
-    
-    
-    /** Creates a new instance of Role */
-    public Rule() {
-    }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @OneToMany(mappedBy="rule", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
-    private Collection<RuleCondition> ruleCondition;
-    
-    @OneToMany(mappedBy="rule", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
-    private Collection<RuleGoal> ruleGoal;
+	/** Creates a new instance of Role */
+	public Rule() {
+	}
 
-    public Collection<RuleCondition> getRuleCondition() {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@OneToMany(mappedBy = "rule", cascade = { CascadeType.PERSIST,
+			CascadeType.REMOVE })
+	private Collection<RuleCondition> ruleCondition;
+
+	@OneToMany(mappedBy = "rule", cascade = { CascadeType.PERSIST,
+			CascadeType.REMOVE })
+	private Collection<RuleGoal> ruleGoal;
+
+	public Collection<RuleCondition> getRuleCondition() {
 		return ruleCondition;
 	}
 
@@ -82,14 +83,12 @@ public class Rule implements java.io.Serializable  {
 	}
 
 	public Long getId() {
-        return id;
-    }
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-   
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getOrgName() {
 		return orgName;
@@ -108,18 +107,21 @@ public class Rule implements java.io.Serializable  {
 	}
 
 	public int hashCode() {
-        int hash = 0;
-        hash += (this.id != null ? this.id.hashCode() : 0);
-        return hash;
-    }
+		int hash = 0;
+		hash += (this.id != null ? this.id.hashCode() : 0);
+		return hash;
+	}
 
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Rule)) {
-            return false;
-        }
-        Rule other = (Rule)object;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) return false;
-        return true;
-    }                
+	public boolean equals(Object object) {
+		// TODO: Warning - this method won't work in the case the id fields are
+		// not set
+		if (!(object instanceof Rule)) {
+			return false;
+		}
+		Rule other = (Rule) object;
+		if (this.id != other.id
+				&& (this.id == null || !this.id.equals(other.id)))
+			return false;
+		return true;
+	}
 }

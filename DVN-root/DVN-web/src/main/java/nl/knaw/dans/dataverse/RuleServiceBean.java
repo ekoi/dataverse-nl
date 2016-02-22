@@ -16,7 +16,7 @@
    Dataverse Network - A web application to share, preserve and analyze research data.
    Developed at the Institute for Quantitative Social Science, Harvard University.
    Version 3.0.
-*/
+ */
 /*
  * UserServiceBean.java
  *
@@ -37,31 +37,32 @@ import javax.persistence.PersistenceContext;
  *
  */
 @Stateless
-public class RuleServiceBean implements RuleServiceLocal { 
+public class RuleServiceBean implements RuleServiceLocal {
 
-    /**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3041567495764689270L;
-	@PersistenceContext(unitName="VDCNet-ejbPU")
-    private EntityManager em;
-    
-    /**
-     * Creates a new instance of UserServiceBean
-     */
-    public RuleServiceBean() {
-    }
+	@PersistenceContext(unitName = "VDCNet-ejbPU")
+	private EntityManager em;
 
-	@Override
-	
-	 public List<Rule> findAll() {
-	        return em.createQuery("select object(o) from Rule as o").getResultList();
+	/**
+	 * Creates a new instance of UserServiceBean
+	 */
+	public RuleServiceBean() {
 	}
 
+	@Override
+	public List<Rule> findAll() {
+		return em.createQuery("select object(o) from Rule as o")
+				.getResultList();
+	}
 
 	@Override
 	public Rule findRuleById(Long id) {
-		return (Rule) em.createQuery("select object(o) from Rule as o where o.id=" + id).getSingleResult();
+		return (Rule) em.createQuery(
+				"select object(o) from Rule as o where o.id=" + id)
+				.getSingleResult();
 	}
 
 	@Override
@@ -72,8 +73,9 @@ public class RuleServiceBean implements RuleServiceLocal {
 
 	@Override
 	public List<Rule> findRuleByOrgName(String orgName) {
-		return em.createQuery("select object(o) from Rule as o where o.orgName='" + orgName+ "'").getResultList();
+		return em.createQuery(
+				"select object(o) from Rule as o where o.orgName='" + orgName
+						+ "'").getResultList();
 	}
-	
-   
+
 }

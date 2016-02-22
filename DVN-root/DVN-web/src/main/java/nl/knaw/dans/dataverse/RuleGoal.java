@@ -16,7 +16,7 @@
    Dataverse Network - A web application to share, preserve and analyze research data.
    Developed at the Institute for Quantitative Social Science, Harvard University.
    Version 3.0.
-*/
+ */
 /*
  * Role.java
  *
@@ -43,41 +43,41 @@ import edu.harvard.iq.dvn.core.study.StudyLock;
  *
  * @author Eko Indarto
  */
-@Entity(name="rule_goal")
-public class RuleGoal implements java.io.Serializable  {
-    /**
+@Entity(name = "rule_goal")
+public class RuleGoal implements java.io.Serializable {
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3345859427259666912L;
-	@Column(name="dvn_alias")
+	@Column(name = "dvn_alias")
 	private String dvnAlias;
-	
+
 	@ManyToOne
-    @JoinColumn(nullable=false)
-    private Role role;    
-	
+	@JoinColumn(nullable = false)
+	private Role role;
+
 	/**
-     * Holds value of property rule.
-     */
+	 * Holds value of property rule.
+	 */
 	@ManyToOne
-    @JoinColumn(nullable=false)
-    private Rule rule;    
-    
-    /** Creates a new instance of Role */
-    public RuleGoal() {
-    }
+	@JoinColumn(nullable = false)
+	private Rule rule;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	/** Creates a new instance of Role */
+	public RuleGoal() {
+	}
 
-    public Long getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getDvnAlias() {
 		return dvnAlias;
@@ -104,18 +104,21 @@ public class RuleGoal implements java.io.Serializable  {
 	}
 
 	public int hashCode() {
-        int hash = 0;
-        hash += (this.id != null ? this.id.hashCode() : 0);
-        return hash;
-    }
+		int hash = 0;
+		hash += (this.id != null ? this.id.hashCode() : 0);
+		return hash;
+	}
 
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof RuleGoal)) {
-            return false;
-        }
-        RuleGoal other = (RuleGoal)object;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) return false;
-        return true;
-    }                
+	public boolean equals(Object object) {
+		// TODO: Warning - this method won't work in the case the id fields are
+		// not set
+		if (!(object instanceof RuleGoal)) {
+			return false;
+		}
+		RuleGoal other = (RuleGoal) object;
+		if (this.id != other.id
+				&& (this.id == null || !this.id.equals(other.id)))
+			return false;
+		return true;
+	}
 }
