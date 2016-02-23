@@ -196,33 +196,27 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
                         final String forward = dvnLogin(user, studyId);
                         LOGGER.log(Level.INFO, "User forwarded to {0}", forward);
                         redirect = forward;
-                        /*
+                        LOGGER.log(Level.INFO, "refererUrl: " + refererUrl + "\tforward: " + forward + "\tredirect: " + redirect);
+                        /*LOGGER.log(Level.INFO, "refererUrl: " + refererUrl + "\tforward: " + forward + "\tredirect: " + redirect);
                          * A user reported not being forwarded to the next page after logging in.
                          * The logs show he (and others) should have been forwarded to /login/AccountTermsOfUsePage?faces-redirect=true
                          * Ben assumes the redirect somehow stopped here (i.e. was not performed),
                          *  because of the requirement of `forward.startsWith("/HomePage")`.
                          * Put the check back in place.
                          */
-                        if (forward != null && forward.startsWith("/HomePage")) {
-                            try {
-                                LOGGER.log(Level.INFO, "refererUrl + redirect = {0}", refererUrl + redirect);
+                        if (forward != null) {
+                        	if (forward.startsWith("/HomePage")) {
+                        		LOGGER.log(Level.INFO, "refererUrl + redirect = {0}", refererUrl + redirect);
                                 response.sendRedirect(refererUrl);
-                                //response.sendRedirect(refererUrl + redirect);
-                            	//response.sendRedirect(redirect); // `refererUrl + redirect`?!
-                            } catch (IOException ex) {
-                                errMessage = ex.toString();
-                                LOGGER.log(Level.SEVERE, null, ex);
-                            }
-                        } /* else {
+                        	} else {
+                        		LOGGER.log(Level.INFO, "refererUrl + redirect = {0}", refererUrl + redirect);
+                                response.sendRedirect(refererUrl + "/faces" + forward);
+                        	}
+                            
+                        } else {
                         	LOGGER.log(Level.SEVERE, "No forward location received or , sending user back to {0}.", refererUrl);
-                        	try {
-                                response.sendRedirect(refererUrl);
-                                //response.sendRedirect(refererUrl + redirect);
-                            } catch (IOException ex) {
-                                errMessage = ex.toString();
-                                LOGGER.log(Level.SEVERE, null, ex);
-                            }
-                        } */
+                            response.sendRedirect(refererUrl);
+                        }
                     } else {
                         loginFailed = true;
                         errMessage = "Admin access is not allowed using federated login";
