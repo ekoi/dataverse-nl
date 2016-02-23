@@ -51,11 +51,10 @@ public class RuleExecutionSet {
 						+ orgAttrVal);
 			} else {
 				LOGGER.log(Level.INFO, "Search rule conditon for " + orgAttrVal);
-				Rule searchedRule = getMatchedRuleCondition(shibProps, ruleList);
-				if (searchedRule != null)
-					setRoleBasedOnRuleGoals(user, searchedRule);
-				else
-					LOGGER.log(Level.INFO, "No rule condition is mached.");
+				List<Rule> searchedRules = getMatchedRuleCondition(shibProps, ruleList);
+				for (Rule rule: searchedRules)
+				setRoleBasedOnRuleGoals(user, rule);
+				
 			}
 		}
 
@@ -93,13 +92,14 @@ public class RuleExecutionSet {
 	 
 	 */
 
-	private Rule getMatchedRuleCondition(Map<String, String> shibProps, List<Rule> ruleList) {
-		Rule searchedRule = null;
+	private List<Rule> getMatchedRuleCondition(Map<String, String> shibProps, List<Rule> ruleList) {
+		List<Rule> searchedRules = new ArrayList<Rule>();
 		for (Rule rule : ruleList) {
 			Collection<RuleCondition> rcList = rule.getRuleCondition();
 			if (rcList == null || rcList.isEmpty()) {
 				//This is the case where a rule has no addition rule condition (Case 3)
-				return rule; //leave this method.
+				//return rule; //leave this method.
+				searchedRules.add(rule);
 			} else {
 				boolean matchedcondition = false;
 				for (RuleCondition rc : rcList) {
@@ -115,11 +115,12 @@ public class RuleExecutionSet {
 					}
 				} 	
 					
-				if (matchedcondition)
-					searchedRule = rule;
+				if (matchedcondition) {
+					searchedRules.add(rule);
+				}
 			}
 		}
-		return searchedRule;
+		return searchedRules;
 	}
 
 	private void setRoleBasedOnRuleGoals(VDCUser user, Rule searchedRule) {
