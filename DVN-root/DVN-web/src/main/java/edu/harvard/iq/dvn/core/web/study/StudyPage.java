@@ -73,7 +73,7 @@ import org.jvnet.hk2.component.Habitat;
 @Named
 @ConversationScoped
 public class StudyPage extends VDCBaseBean implements java.io.Serializable  {
-    private static Logger dbgLog = Logger.getLogger(StudyPage.class.getCanonicalName());
+    private static Logger logger = Logger.getLogger(StudyPage.class.getCanonicalName());
     @EJB private StudyServiceLocal studyService;
     @EJB private StudyFileServiceLocal studyFileService; 
     @EJB private StudyCommentService studyCommentService;
@@ -236,7 +236,7 @@ public class StudyPage extends VDCBaseBean implements java.io.Serializable  {
 
         } else {
             // WE SHOULD HAVE A STUDY ID, throw an error
-            System.out.println("ERROR: in StudyPage, without a globalId or a studyId");
+            logger.severe("ERROR: in StudyPage, without a globalId or a studyId");
         }    
     }
 
@@ -1141,7 +1141,7 @@ public class StudyPage extends VDCBaseBean implements java.io.Serializable  {
         } catch (Throwable t) {
             
             // error condition handled - we'll just log it and return null.
-            dbgLog.info("Configuratoin lookup: Exception occurred retrieving port configuration... " + t.getMessage());
+            logger.info("Configuratoin lookup: Exception occurred retrieving port configuration... " + t.getMessage());
             
         }
 

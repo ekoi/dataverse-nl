@@ -37,6 +37,7 @@ import edu.harvard.iq.dvn.core.vdc.VDCNetworkServiceLocal;
 import java.lang.String;
 import java.lang.String;
 import java.util.*;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -61,6 +62,7 @@ public class UserServiceBean implements UserServiceLocal {
     VDCNetworkServiceLocal vdcNetworkService;
     @PersistenceContext(unitName = "VDCNet-ejbPU")
     private EntityManager em;
+    private static final Logger logger = Logger.getLogger(UserServiceBean.class.getCanonicalName());
 
     /**
      * Creates a new instance of UserServiceBean
@@ -269,7 +271,7 @@ public class UserServiceBean implements UserServiceLocal {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void clearAgreedTermsOfUse() {
-        System.out.println("IN clearAgreedTermsOfUse");
+        logger.info("Clearing all agreements to Terms of Use!");
         em.createQuery("update VDCUser u set u.agreedTermsOfUse=false "//where " 
                 // " u.networkRole is null or "
                 //  +" u.networkRole.name <> '"
@@ -288,7 +290,7 @@ public class UserServiceBean implements UserServiceLocal {
         Query query = em.createNativeQuery(queryStr);
    
         Long count = (Long) query.getSingleResult();
-        System.out.println("count is "+count+", type "+count.getClass().getName());
+        logger.fine("count is "+count+", type "+count.getClass().getName());
         if (count.compareTo(new Long(0))>0) {
             return true;
         } else {
@@ -301,7 +303,7 @@ public class UserServiceBean implements UserServiceLocal {
     
         Long count = (Long) query.getSingleResult();
         
-        System.out.println("count is "+count+", type "+count.getClass().getName());
+        logger.fine("count is "+count+", type "+count.getClass().getName());
         if (count.compareTo(new Long(0))>0) {
             return true;
         } else {

@@ -32,6 +32,7 @@ import edu.harvard.iq.dvn.core.vdc.VDCNetwork;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
@@ -56,8 +57,9 @@ public class EditNetworkPrivilegesServiceBean implements EditNetworkPrivilegesSe
     private List<NetworkPrivilegedUserBean> privilegedUsers;
     private List<VDCUser> TOUprivilegedUsers;
     private List<CreatorRequestBean> creatorRequests;
-    
-    
+    private static final Logger logger = Logger.getLogger(EditNetworkPrivilegesServiceBean.class.getCanonicalName());
+
+
     /**
      *  Initialize the bean with a Study for editing
      */
@@ -88,7 +90,7 @@ public class EditNetworkPrivilegesServiceBean implements EditNetworkPrivilegesSe
                 + "%' or lower(u.email) like '" + lowerSearchString.replaceAll("'", "''") + "%'"
                 + " or lower(u.firstName) like '" + lowerSearchString.replaceAll("'", "''") + "%'"
                 + " or lower(u.userName) like '" + lowerSearchString.replaceAll("'", "''") + "%';";
-        System.out.print (queryString);
+        logger.fine(queryString);
         List<VDCUser> users = em.createQuery(queryString).getResultList();
         List<NetworkPrivilegedUserBean> returnList = new ArrayList<NetworkPrivilegedUserBean>();
         int i = 1;

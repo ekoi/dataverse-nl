@@ -996,7 +996,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
 
 
                             } catch (org.apache.lucene.queryParser.ParseException ex) {
-                                Logger.getLogger(StudyListingPage.class.getName()).log(Level.SEVERE, null, ex);
+                                logger.log(Level.SEVERE, null, ex);
                             }
                         } else {
                             List<Study> studies = col.getStudies();

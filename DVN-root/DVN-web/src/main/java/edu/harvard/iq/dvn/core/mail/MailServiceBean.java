@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -59,6 +61,7 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
 
     @EJB VDCNetworkServiceLocal vdcNetworkService;
     @EJB StudyServiceLocal studyService;
+    private static final Logger logger = Logger.getLogger(MailServiceBean.class.getCanonicalName());
 
     /**
      * Creates a new instance of MailServiceBean
@@ -80,9 +83,9 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
             msg.setText(messageText);
             Transport.send(msg);
         } catch (AddressException ae) {
-            ae.printStackTrace(System.out);
+            logger.log(Level.WARNING, null, ae);
         } catch (MessagingException me) {
-            me.printStackTrace(System.out);
+            logger.log(Level.WARNING, null, me);
         }
     }
     
@@ -90,7 +93,7 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
     private Session session;
     public void sendDoNotReplyMail(String to, String subject, String messageText){
         try {
-            System.out.print(to);
+            logger.fine(to);
             Message msg = new MimeMessage(session);
             msg.setFrom();
             msg.setRecipients(Message.RecipientType.TO,
@@ -99,9 +102,9 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
             msg.setText(messageText+"\n\nPlease do not reply to this email.\nThank you,\nThe Dataverse Network Project");
             Transport.send(msg);
         } catch (AddressException ae) {
-            ae.printStackTrace(System.out);
+            logger.log(Level.WARNING, null, ae);
         } catch (MessagingException me) {
-            me.printStackTrace(System.out);
+            logger.log(Level.WARNING, null, me);
         }
     }
     
@@ -130,9 +133,9 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
             
             Transport.send(msg);
         } catch (AddressException ae) {
-            ae.printStackTrace(System.out);
+            logger.log(Level.WARNING, null, ae);
         } catch (MessagingException me) {
-            me.printStackTrace(System.out);
+            logger.log(Level.WARNING, null, me);
         }
     }
     public void sendPasswordUpdateNotification(String userEmail, String userFirstName,String userName, String newPassword) {

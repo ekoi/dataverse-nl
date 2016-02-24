@@ -199,7 +199,7 @@ public class VDCGroupServiceBean implements VDCGroupServiceLocal {
         List<VDCGroup> nodeDescendants = findByParentId(group.getId());
         if (nodeDescendants != null) {
             allDescendants.addAll(nodeDescendants);
-            System.out.println("VDCGroupServiceBean: descendants = " + allDescendants.toString());
+//            System.out.println("VDCGroupServiceBean: descendants = " + allDescendants.toString());
             buildDescendantsList(nodeDescendants);
             Iterator innerIterator = allDescendants.iterator();
             while (innerIterator.hasNext()) {

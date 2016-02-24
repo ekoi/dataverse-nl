@@ -166,7 +166,7 @@ public class Indexer implements java.io.Serializable  {
             try {
                 dvnMaxClauseCount = Integer.parseInt(dvnMaxClauseCountStr);
             } catch (Exception e){
-                e.printStackTrace();
+                logger.log(Level.WARNING, null, e);
                 dvnMaxClauseCount = 1024;
             }
         }
@@ -176,7 +176,7 @@ public class Indexer implements java.io.Serializable  {
             r = IndexReader.open(dir, true);
             searcher = new IndexSearcher(r);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         // should we use System.getProperty("dvn.taxonomyindex.location") instead?
         taxoDirName = dvnIndexLocation + "/" + taxoDirName;
@@ -184,7 +184,7 @@ public class Indexer implements java.io.Serializable  {
             assureTaxoDirExists();
             taxoDir = FSDirectory.open(new File(taxoDirName));
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
     }
 
@@ -207,7 +207,7 @@ public class Indexer implements java.io.Serializable  {
         try {
             indexer.setup();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         return indexer;
     }
@@ -231,13 +231,13 @@ public class Indexer implements java.io.Serializable  {
             deleteWriter.deleteDocuments(new Term("varStudyId",Long.toString(studyId)));
             deleteWriter.deleteDocuments(new Term("versionStudyId",Long.toString(studyId)));
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         } finally {
             if (deleteWriter != null) {
                 try {
                     deleteWriter.close();
                 } catch (Exception ex) {
-                    
+                    logger.log(Level.WARNING, null, ex);
                 }
             }
         }
@@ -265,9 +265,8 @@ public class Indexer implements java.io.Serializable  {
             deleteWriter.deleteDocuments(new Term("versionStudyId",Long.toString(studyId)));
         } catch (Exception ex) {
             success = false;
-            errorMessage = "Caught an exception trying to delete index document for study " + studyId + "; " + ex.getMessage();
-            logger.info(errorMessage);
-            ex.printStackTrace();
+            errorMessage = "Caught an exception trying to delete index document for study " + studyId;
+            logger.log(Level.WARNING, errorMessage, ex);
         } finally {
             if (deleteWriter != null) {
                 try {
@@ -296,7 +295,7 @@ public class Indexer implements java.io.Serializable  {
             reader.deleteDocuments(new Term("versionStudyId",Long.toString(studyId)));
             reader.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
     }
 
@@ -715,7 +714,7 @@ public class Indexer implements java.io.Serializable  {
             writer.commit();
             writer.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }  
     }
     
@@ -758,7 +757,7 @@ public class Indexer implements java.io.Serializable  {
             }
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         } finally {
             if (reader != null) {
                 reader.close();
@@ -791,8 +790,7 @@ public class Indexer implements java.io.Serializable  {
             try {
                 linkedStudyIds = getHitIds(queryAcrossAllCollections);
             } catch (Exception ex) {
-                logger.warning("Caught exception while executing combined colleciton query on VDC "+vdc.getId());
-                ex.printStackTrace();
+                logger.log(Level.WARNING, "Caught exception while executing combined colleciton query on VDC "+vdc.getId(), ex);
             }
             
             
@@ -1047,7 +1045,7 @@ public class Indexer implements java.io.Serializable  {
                 dvnValueSb.append(new String(ta.termBuffer()).substring(0, ta.termLength()) + " ");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, null, e);
         }
         String dvnValue = dvnValueSb.toString();
         return dvnValue;
@@ -1160,7 +1158,7 @@ public class Indexer implements java.io.Serializable  {
             query = parser.parse(adhocQuery);
             logger.fine("INDEXER: parsed adhoc query: "+query.toString());
         } catch (ParseException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         return getHitIds(getHits(query));
 //        return getHitIds(query);
@@ -1459,7 +1457,7 @@ public class Indexer implements java.io.Serializable  {
                     matchIdsSet.add(studyIdLong);
                 } catch (Exception ex) {
                     logger.fine("Query for " + query + "matched but id was null, dumping Lucene doc...\n" + d);
-                    ex.printStackTrace();
+                    logger.log(Level.WARNING, null, ex);
                 }
             }
             logger.fine("done iterate: " + DateTools.dateToString(new Date(), Resolution.MILLISECOND));
@@ -2170,7 +2168,7 @@ public class Indexer implements java.io.Serializable  {
                         Query query = parser.parse(queryString);
                         collectionQueries.add(query);
                     } catch (org.apache.lucene.queryParser.ParseException ex) {
-                        Logger.getLogger(StudyListingPage.class.getName()).log(Level.SEVERE, null, ex);
+                        logger.log(Level.SEVERE, null, ex);
                     }
                 }
             } else {
@@ -2222,7 +2220,7 @@ public class Indexer implements java.io.Serializable  {
                     logger.fine("staticCollectionQuery: " + staticColQuery);
                     collectionQueries.add(staticColQuery);
                 } catch (org.apache.lucene.queryParser.ParseException ex) {
-                    Logger.getLogger(AdvSearchPage.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -2239,7 +2237,7 @@ public class Indexer implements java.io.Serializable  {
         try {
             dvnOwnerIdQuery = parser.parse("dvOwnerId:" + vdc.getId().toString());
         } catch (org.apache.lucene.queryParser.ParseException ex) {
-            Logger.getLogger(AdvSearchPage.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         return dvnOwnerIdQuery;
     }
@@ -2251,7 +2249,7 @@ public class Indexer implements java.io.Serializable  {
         try {
             dvNetworkIdQuery = parser.parse("dvNetworkId:" + dvNetworkId.toString());
         } catch (org.apache.lucene.queryParser.ParseException ex) {
-            Logger.getLogger(AdvSearchPage.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             dvNetworkIdQuery = null; 
         }
         return dvNetworkIdQuery;
@@ -2264,7 +2262,7 @@ public class Indexer implements java.io.Serializable  {
         try {
             dvNetworkIdQuery = parser.parse("ownerDvNetworkId:" + dvNetworkId.toString());
         } catch (org.apache.lucene.queryParser.ParseException ex) {
-            Logger.getLogger(AdvSearchPage.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             dvNetworkIdQuery = null; 
         }
         return dvNetworkIdQuery;

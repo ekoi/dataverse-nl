@@ -207,7 +207,7 @@ public class GuestBookResponseServiceBean {
             + " gbr.firstname, gbr.lastname, gbr.email, gbr.institution, "
             + " vdc.name, s.protocol, s.authority, m.title, fmd.label, gbr.responsetime, gbr.position, gbr.study_id, gbr.id, s.id, gbr.downloadType  "    +    
             "order by s.id, gbr.id";
-            System.out.print(gbrDownloadQueryString);
+//            System.out.print(gbrDownloadQueryString);
         Query query = em.createNativeQuery(gbrDownloadQueryString);
         
         return  convertIntegerToLong(query.getResultList(),14);

@@ -38,6 +38,7 @@ import edu.harvard.iq.dvn.core.vdc.VDCServiceLocal;
 import edu.harvard.iq.dvn.core.web.common.VDCBaseBean;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.bean.ViewScoped;
@@ -74,7 +75,7 @@ public class ManageStudiesList extends VDCBaseBean {
     private static final String DATE_UPDATED_COLUMN = "lastUpdated";    
     private static final String ACTION_COLUMN = "actionReleased";
     private DataPaginator paginator;
-    private static Logger dbgLog = Logger.getLogger(ManageStudiesList.class.getCanonicalName());
+    private static final Logger logger = Logger.getLogger(ManageStudiesList.class.getCanonicalName());
     @Inject private VersionNotesPopupBean versionNotesPopupBean;
     
     private VDCUser pageUser = null;
@@ -143,14 +144,13 @@ public class ManageStudiesList extends VDCBaseBean {
             List deaccessionedStudyVersionIds = null;
             Long vdcId = getVDCRequestBean().getCurrentVDCId();
             
-            dbgLog.info("manage studies list; vdcid: "+vdcId);
-            System.out.print("manage studies list order by: " + orderBy );
+            logger.log(Level.FINE, "manage studies list; vdcid: {0}, order by: {1}", new Object[]{vdcId, orderBy});
             VDCUser user = getVDCSessionBean().getLoginBean() == null ? null : getVDCSessionBean().getLoginBean().getUser();
             
             if (user != null) {
-                dbgLog.info("manage studies list; user: "+user.getUserName());
+                logger.fine("manage studies list; user: "+user.getUserName());
             } else {
-                dbgLog.info("manage studies list; null user.");
+                logger.fine("manage studies list; null user.");
             }
             
             if (vdcId != null){

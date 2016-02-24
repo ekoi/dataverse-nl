@@ -41,6 +41,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ViewScoped;
@@ -58,6 +59,8 @@ import javax.inject.Named;
 public class AddClassificationsPage extends VDCBaseBean implements Serializable {
     @EJB VDCGroupServiceLocal vdcGroupService;
     @EJB VDCServiceLocal vdcService;
+
+    private static final Logger logger = Logger.getLogger(AddClassificationsPage.class.getCanonicalName());
 
     private HtmlInputText     nameInput         = new HtmlInputText();
     private HtmlInputTextarea descriptionInput  = new HtmlInputTextarea();
@@ -80,9 +83,9 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
 
 
     public void init() {
-        System.out.println("before super init");
+        logger.fine("before super init");
         super.init();
-        System.out.println("cid is "+classId);
+        logger.fine("cid is "+classId);
         initParentSelectItems();
         dataverses         = new ArrayList();
         selectedDataverses = new ArrayList();

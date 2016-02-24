@@ -27,6 +27,7 @@
  */
 package edu.harvard.iq.dvn.core.web.util;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,8 +81,7 @@ public class EmailValidator implements Validator, java.io.Serializable  {
           } 
           if (input[i].indexOf('@') > 1) {
               int firstAt = input[i].indexOf('@');
-              System.out.print("firstAt "+ firstAt);
-              System.out.print("input[i].indexOf(firstAt, '@') "+ input[i].indexOf( '@', firstAt +1));
+              logger.log(Level.FINE, "firstAt {0}; input[i].indexOf('@', firstAt + 1) {1}", new Object[]{firstAt, input[i].indexOf( '@', firstAt +1)});
               if (input[i].indexOf( '@', firstAt + 1) != -1) {
                   isValid = false;
                   msg += "  A valid email address must contain only one \"@\".";

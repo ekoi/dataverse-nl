@@ -30,6 +30,7 @@ import edu.harvard.iq.dvn.core.vdc.VDCNetwork;
 import edu.harvard.iq.dvn.core.vdc.VDCNetworkServiceLocal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -50,6 +51,7 @@ import javax.servlet.http.HttpSession;
 @Named("VDCSession")
 @SessionScoped
 public class VDCSessionBean  implements java.io.Serializable  {
+    private static final Logger logger = Logger.getLogger(VDCSessionBean.class.getCanonicalName());
     @EJB GroupServiceLocal groupServiceLocal; 
     @EJB VDCNetworkServiceLocal vdcNetworkService; 
 
@@ -131,7 +133,7 @@ public class VDCSessionBean  implements java.io.Serializable  {
      */
     public VDCNetwork getVdcNetwork() {
         if (vdcNetwork == null) {
-            System.out.print("vdcnetwork is null");
+            logger.info("vdcnetwork is null");
             VDCNetwork network = vdcNetworkService.findRootNetwork();  // There is only one network, which will always have Id=1
             setVdcNetwork(network);              
         }
@@ -144,7 +146,7 @@ public class VDCSessionBean  implements java.io.Serializable  {
      * @param vdcNetwork New value of property vdcNetwork.
      */
     public void setVdcNetwork(VDCNetwork vdcNetwork) {
-        System.out.print("setting vdcnetwork");
+        logger.info("setting vdcnetwork");
         this.vdcNetwork = vdcNetwork;
     }
     

@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
@@ -60,6 +61,8 @@ import javax.persistence.PersistenceContextType;
 @Stateful
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class EditStudyServiceBean implements edu.harvard.iq.dvn.core.study.EditStudyService, java.io.Serializable {
+    private static final Logger logger = Logger.getLogger(EditStudyServiceBean.class.getCanonicalName());
+
     @EJB IndexServiceLocal indexService;
     @EJB MailServiceLocal mailService;
     @EJB VDCNetworkServiceLocal vdcNetworkService;
@@ -141,7 +144,7 @@ public class EditStudyServiceBean implements edu.harvard.iq.dvn.core.study.EditS
         em.remove(elem);
     }
      public void removeCollectionElement(List list,int index) {
-        System.out.println("index is "+index+", list size is "+list.size());
+        logger.fine("index is "+index+", list size is "+list.size());
         em.remove(list.get(index));
         list.remove(index);
     }  
@@ -195,7 +198,7 @@ public class EditStudyServiceBean implements edu.harvard.iq.dvn.core.study.EditS
             }
             em.flush(); // Always call flush(), so that we can detect an OptimisticLockException
         } catch (EJBException e) {
-            System.out.println("EJBException " + e.getMessage() + " saving studyVersion " + studyVersion.getId() + " edited by " + user.getUserName() + " at " + new Date().toString());
+            logger.severe("EJBException " + e.getMessage() + " saving studyVersion " + studyVersion.getId() + " edited by " + user.getUserName() + " at " + new Date().toString());
             e.printStackTrace();
             throw e;
         }

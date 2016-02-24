@@ -39,11 +39,13 @@ import java.util.Enumeration;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 
 public class ErrorPageServlet extends HttpServlet  {
 
     private static String timestamp = new String("");
+    private static final Logger logger = Logger.getLogger(ErrorPageServlet.class.getCanonicalName());
 
     /** Creates a new instance of ErrorPageServlet */
     public ErrorPageServlet() {
@@ -114,7 +116,7 @@ public class ErrorPageServlet extends HttpServlet  {
         Enumeration attributeNames = request.getAttributeNames();
         while (attributeNames.hasMoreElements()) {
              String attributeName = attributeNames.nextElement().toString();
-             System.out.println("ERROR SERVLET: the header name/value pair is: " + attributeName + ":" + request.getAttribute(attributeName).toString());
+             logger.fine("Header name/value pair is: " + attributeName + ":" + request.getAttribute(attributeName).toString());
         }
     }
     

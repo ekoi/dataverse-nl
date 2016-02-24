@@ -984,7 +984,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
 
         if (queryStr != null) {
             Query query = em.createNativeQuery(queryStr);
-            System.out.print("sort Test global-Id-sort " + queryStr);
+            logger.fine("sort Test global-Id-sort " + queryStr);
             List<Long> returnList = new ArrayList<Long>();
             for (Object currentResult : query.getResultList()) {
                 // convert results into Longs
@@ -1230,11 +1230,11 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         // Get list of studies that have been updated yesterday,
         // and export them to legacy VDC system
 
-        Logger logger = null;
+        Logger logger2 = null;
 
         String exportLogDirStr = System.getProperty("vdc.export.log.dir");
         if (exportLogDirStr == null) {
-            System.out.println("Missing system property: vdc.export.log.dir.  Please add to JVM options");
+            logger.severe("Missing system property: vdc.export.log.dir.  Please add to JVM options");
             return;
         }
         File exportLogDir = new File(exportLogDirStr);
@@ -1242,14 +1242,14 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
             exportLogDir.mkdir();
         }
 
-        logger = Logger.getLogger("edu.harvard.iq.dvn.core.web.servlet.VDCExportServlet");
+        logger2 = Logger.getLogger("edu.harvard.iq.dvn.core.web.servlet.VDCExportServlet");
 
         // Everytime export runs, we want to write to a separate log file (handler).
         // So if export has run previously, remove the previous handler
-        if (logger.getHandlers() != null && logger.getHandlers().length > 0) {
-            int numHandlers = logger.getHandlers().length;
+        if (logger2.getHandlers() != null && logger2.getHandlers().length > 0) {
+            int numHandlers = logger2.getHandlers().length;
             for (int i = 0; i < numHandlers; i++) {
-                logger.removeHandler(logger.getHandlers()[i]);
+                logger2.removeHandler(logger2.getHandlers()[i]);
             }
         }
 
@@ -1262,10 +1262,10 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         }
 
         // Add handler to the desired logger
-        logger.addHandler(handler);
+        logger2.addHandler(handler);
 
 
-        logger.info("Begin Exporting Studies");
+        logger2.info("Begin Exporting Studies");
         int studyCount = 0;
         int deletedStudyCount = 0;
         try {
@@ -1326,25 +1326,25 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
 
             for (Iterator it = updatedStudies.iterator(); it.hasNext();) {
                 Study study = (Study) it.next();
-                logger.info("Exporting study " + study.getStudyId());
+                logger2.info("Exporting study " + study.getStudyId());
 
                 exportStudyToLegacySystem(study, authority);
                 studyCount++;
 
             }
         } catch (Exception e) {
-            logger.severe(e.getMessage());
+            logger2.severe(e.getMessage());
 
             String stackTrace = "StackTrace: \n";
-            logger.severe("Exception caused by: " + e + "\n");
+            logger2.severe("Exception caused by: " + e + "\n");
             StackTraceElement[] ste = e.getStackTrace();
             for (int m = 0; m < ste.length; m++) {
                 stackTrace += ste[m].toString() + "\n";
             }
-            logger.severe(stackTrace);
+            logger2.severe(stackTrace);
         }
 
-        logger.info("End export, " + studyCount + " studies successfully exported, " + deletedStudyCount + " studies deleted.");
+        logger2.info("End export, " + studyCount + " studies successfully exported, " + deletedStudyCount + " studies deleted.");
     }
 
     private void exportStudyToLegacySystem(Study study, String authority) throws IOException, JAXBException {
@@ -2611,7 +2611,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
             try {                    
                 studyFile = studyFileService.getStudyFile(sfId);
             } catch (IllegalArgumentException ex) {
-                System.out.println("Study File (ID=" + sfId + ") was found in index, but is not in DB!");
+                logger.warning("Study File (ID=" + sfId + ") was found in index, but is not in DB!");
             }
             
             if (studyFile != null) {

@@ -28,6 +28,8 @@
 package edu.harvard.iq.dvn.core.web.util;
 
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
@@ -43,7 +45,8 @@ import javax.servlet.http.HttpServletRequest;
 public class UrlValidator implements Validator, java.io.Serializable  {
     
     private static String msg = new String();
-    
+    private static final Logger logger = Logger.getLogger(UrlValidator.class.getCanonicalName());
+
     /** Creates a new instance of UrlValidator */
     public UrlValidator() {
     }
@@ -62,7 +65,7 @@ public class UrlValidator implements Validator, java.io.Serializable  {
                 throw new ValidatorException(message);
             }
         } catch (java.net.MalformedURLException mue) {
-            System.out.println("An exception was thrown ... " + mue.toString());
+            logger.log(Level.WARNING, null, mue);
         }
     }
     
@@ -77,7 +80,7 @@ public class UrlValidator implements Validator, java.io.Serializable  {
                 isValid = true;
             }
         } catch (java.net.MalformedURLException mue) {
-            System.out.println( "MalformedURLException . . . " + mue.getCause().toString());
+            logger.log(Level.WARNING, null, mue);
             msg = "Malformed Url Exception . . . " + mue.getCause().toString();
         } finally {
             return isValid;

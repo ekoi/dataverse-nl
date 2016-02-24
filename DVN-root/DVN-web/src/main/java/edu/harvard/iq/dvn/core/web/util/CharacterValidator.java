@@ -27,6 +27,7 @@
  */
 package edu.harvard.iq.dvn.core.web.util;
 
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.faces.FacesException;
@@ -41,8 +42,9 @@ import javax.faces.validator.Validator;
  * @author wbossons
  */
 public class CharacterValidator implements Validator, java.io.Serializable  {
+    private static final Logger logger = Logger.getLogger(CharacterValidator.class.getCanonicalName());
     private static String msg = new String();
-    
+
     /** Creates a new instance of CharacterValidator */
     public CharacterValidator() {
     }
@@ -60,7 +62,7 @@ public class CharacterValidator implements Validator, java.io.Serializable  {
                 context.renderResponse();
             }
         } catch (Exception e) {
-            System.out.println("An exception was thrown ... " + e.toString());
+            logger.warning("An exception was thrown ... " + e.toString());
         } 
     }
     
@@ -84,7 +86,7 @@ public class CharacterValidator implements Validator, java.io.Serializable  {
 
             }
         } catch (Exception e) {
-            System.out.println("An exception was thrown ... " + e.toString());
+            logger.warning("An exception was thrown ... " + e.toString());
         } 
     }
     

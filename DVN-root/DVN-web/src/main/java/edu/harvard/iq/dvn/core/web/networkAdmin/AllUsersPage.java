@@ -32,6 +32,7 @@ import edu.harvard.iq.dvn.core.web.common.VDCBaseBean;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import com.icesoft.faces.component.ext.HtmlDataTable;
 import javax.faces.bean.ViewScoped;
@@ -51,7 +52,9 @@ public class AllUsersPage extends VDCBaseBean implements java.io.Serializable  {
     @EJB UserServiceLocal userService;
     @EJB VDCNetworkServiceLocal vdcNetworkService;
     private HtmlDataTable dataTable;
-    
+
+    private static final Logger logger = Logger.getLogger(AllUsersPage.class.getCanonicalName());
+
     public void init() {
         super.init();
         initUserData();
@@ -66,7 +69,7 @@ public class AllUsersPage extends VDCBaseBean implements java.io.Serializable  {
             boolean defaultNetworkAdmin = elem.getNetworkRole()!=null
                     && elem.getId().equals(vdcNetworkService.find().getDefaultNetworkAdmin().getId());
             userData.add(new AllUsersDataBean(elem, defaultNetworkAdmin));
-            System.out.println("elem is "+elem+", elem id is "+elem.getId());
+            logger.fine("elem is "+elem+", elem id is "+elem.getId());
         }
     }
     
