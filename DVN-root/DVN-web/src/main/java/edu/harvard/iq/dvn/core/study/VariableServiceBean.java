@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -49,7 +51,8 @@ public class VariableServiceBean implements edu.harvard.iq.dvn.core.study.Variab
     private EntityManager em;
     @EJB IndexServiceLocal indexService;
     @EJB StudyServiceLocal studyService;
-    
+    private static final Logger logger = Logger.getLogger(VariableServiceBean.class.getCanonicalName());
+
     /** Creates a new instance of VariableServiceBean */
     public VariableServiceBean() {
     }
@@ -257,7 +260,7 @@ public class VariableServiceBean implements edu.harvard.iq.dvn.core.study.Variab
             try {                    
                 dv = getDataVariable(dvId);
             } catch (IllegalArgumentException ex) {
-                System.out.println("Data variable (ID=" + dvId + ") was found in index, but is not in DB.");
+                logger.log(Level.WARNING, "Data variable (ID=" + dvId + ") was found in index, but is not in DB.", ex);
             }
             
             if (dv != null) {

@@ -77,14 +77,14 @@ public class DOIEZIdServiceBean implements edu.harvard.iq.dvn.core.doi.DOIEZIdSe
             retString = ezidService.createIdentifier(identifier, metadata);
             logger.log(Level.INFO, "create DOI identifier retString : " + retString);
         } catch (EZIDException e) {
-            logger.log(Level.INFO, "Identifier not created: create failed");
+            logger.log(Level.WARNING, "Identifier not created: create failed");
             logger.log(Level.INFO, "String " + e.toString());
             logger.log(Level.INFO, "localized message " + e.getLocalizedMessage());
             logger.log(Level.INFO, "cause " + e.getCause());
             logger.log(Level.INFO, "message " + e.getMessage());
             return "Identifier not created";
         }
-        System.out.print("createIdentifier return string : " + retString);
+        logger.fine("createIdentifier return string : " + retString);
         return retString;
     }
     
@@ -95,7 +95,7 @@ public class DOIEZIdServiceBean implements edu.harvard.iq.dvn.core.doi.DOIEZIdSe
        try {
               metadata = ezidService.getMetadata(identifier);
             }  catch (EZIDException e){                
-            logger.log(Level.INFO, "getIdentifierMetadata failed");
+            logger.log(Level.WARNING, "getIdentifierMetadata failed");
             logger.log(Level.INFO, "String " + e.toString() );
             logger.log(Level.INFO, "localized message " + e.getLocalizedMessage());
             logger.log(Level.INFO, "cause " + e.getCause());
@@ -111,7 +111,7 @@ public class DOIEZIdServiceBean implements edu.harvard.iq.dvn.core.doi.DOIEZIdSe
        try {
                ezidService.setMetadata(identifier, metadata);
             }  catch (EZIDException e){                
-            logger.log(Level.INFO, "modifyMetadata failed");
+            logger.log(Level.WARNING, "modifyMetadata failed");
             logger.log(Level.INFO, "String " + e.toString() );
             logger.log(Level.INFO, "localized message " + e.getLocalizedMessage());
             logger.log(Level.INFO, "cause " + e.getCause());
@@ -125,7 +125,7 @@ public class DOIEZIdServiceBean implements edu.harvard.iq.dvn.core.doi.DOIEZIdSe
         try {
             doiMetadata = ezidService.getMetadata(identifier);
         } catch (EZIDException e) {
-            logger.log(Level.INFO, "get matadata failed cannot delete");
+            logger.log(Level.WARNING, "get matadata failed cannot delete");
             logger.log(Level.INFO, "String " + e.toString());
             logger.log(Level.INFO, "localized message " + e.getLocalizedMessage());
             logger.log(Level.INFO, "cause " + e.getCause());
@@ -140,7 +140,7 @@ public class DOIEZIdServiceBean implements edu.harvard.iq.dvn.core.doi.DOIEZIdSe
             try {
                 ezidService.deleteIdentifier(identifier);
             } catch (EZIDException e) {
-                logger.log(Level.INFO, "delete failed");
+                logger.log(Level.WARNING, "delete failed");
                 logger.log(Level.INFO, "String " + e.toString());
                 logger.log(Level.INFO, "localized message " + e.getLocalizedMessage());
                 logger.log(Level.INFO, "cause " + e.getCause());
@@ -191,11 +191,11 @@ public class DOIEZIdServiceBean implements edu.harvard.iq.dvn.core.doi.DOIEZIdSe
         DOISHOULDER = "doi:" + studyIn.getAuthority();
         if (inetAddress.equals("localhost")){                    
            targetUrl ="http://localhost:8080" + "/dvn/study?globalId=" + DOISHOULDER + "/" + studyIn.getStudyId();
-           System.out.print("inetAddress.equals localhost" + targetUrl);
+           logger.fine("inetAddress.equals localhost" + targetUrl);
         } else{
            targetUrl = "http://" + inetAddress + "/dvn/study?globalId=" + DOISHOULDER + "/" + studyIn.getStudyId();
         }              
-        System.out.print("targetUrl: " + targetUrl);
+        logger.fine("targetUrl: " + targetUrl);
         metadata.put("_target", targetUrl);
         return metadata;
     }
@@ -213,7 +213,7 @@ public class DOIEZIdServiceBean implements edu.harvard.iq.dvn.core.doi.DOIEZIdSe
         try {
             ezidService.setMetadata(identifier, metadata);
         } catch (EZIDException e) {
-            logger.log(Level.INFO, "modifyMetadata failed");
+            logger.log(Level.WARNING, "modifyMetadata failed");
             logger.log(Level.INFO, "String " + e.toString());
             logger.log(Level.INFO, "localized message " + e.getLocalizedMessage());
             logger.log(Level.INFO, "cause " + e.getCause());
@@ -228,7 +228,7 @@ public class DOIEZIdServiceBean implements edu.harvard.iq.dvn.core.doi.DOIEZIdSe
        try {
                ezidService.setMetadata(identifier, metadata);
             }  catch (EZIDException e){                
-            logger.log(Level.INFO, "modifyMetadata failed");
+            logger.log(Level.WARNING, "modifyMetadata failed");
             logger.log(Level.INFO, "String " + e.toString() );
             logger.log(Level.INFO, "localized message " + e.getLocalizedMessage());
             logger.log(Level.INFO, "cause " + e.getCause());

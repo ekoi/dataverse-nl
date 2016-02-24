@@ -37,6 +37,7 @@ import edu.harvard.iq.dvn.core.vdc.VDCNetworkServiceLocal;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
@@ -63,6 +64,7 @@ public class EditLockssServiceBean implements EditLockssService, java.io.Seriali
    
     private LockssConfig lockssConfig;
     private boolean newLockssConfig=false;
+    private static final Logger logger = Logger.getLogger(EditLockssService.class.getCanonicalName());
 
 
     public List<LicenseType> getLicenseTypes() {
@@ -162,7 +164,7 @@ public class EditLockssServiceBean implements EditLockssService, java.io.Seriali
         em.remove(elem);
     }
      public void removeCollectionElement(List list,int index) {
-        System.out.println("index is "+index+", list size is "+list.size());
+        logger.fine("index is "+index+", list size is "+list.size());
         em.remove(list.get(index));
         list.remove(index);
     }  
@@ -212,7 +214,7 @@ public class EditLockssServiceBean implements EditLockssService, java.io.Seriali
                 oaiSet.setLockssConfig(lockssConfig);
             }
         }
-        System.out.println("oaiSet="+lockssConfig.getOaiSet());
+        logger.fine("oaiSet="+lockssConfig.getOaiSet());
       
 
     }

@@ -28,6 +28,7 @@ package edu.harvard.iq.dvn.core.web.study;
 import com.icesoft.faces.component.ext.HtmlCommandButton;
 //Commenting out: VWP component. -- L.A. 
 //import com.sun.jsfcl.data.DefaultTableDataModel;
+import com.oracle.tools.packager.Log;
 import edu.harvard.iq.dvn.core.study.EditStudyService;
 import edu.harvard.iq.dvn.core.study.Study;
 import edu.harvard.iq.dvn.core.study.StudyAbstract;
@@ -78,6 +79,7 @@ import edu.harvard.iq.dvn.core.study.StudyField;
 import edu.harvard.iq.dvn.core.study.StudyFieldValue;
 import edu.harvard.iq.dvn.core.study.TemplateServiceLocal;
 import java.util.Date;
+import java.util.logging.Logger;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -109,6 +111,8 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
     @EJB TemplateServiceLocal templateService;
     @Inject private VersionNotesPopupBean versionNotesPopup;
     @EJB DOIEZIdServiceLocal doiEZIdService;
+    private static final Logger logger = Logger.getLogger(EditStudyPage.class.getCanonicalName());
+
     /**
      * <p>Construct a new Page bean instance.</p>
      */
@@ -197,7 +201,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
      * resources that will be required in your event handlers.</p>
      */
     public void preprocess() {
-        System.out.println("in preprocess");
+        logger.fine("in preprocess");
     }
     
     /**
@@ -209,7 +213,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
      * this page.</p>
      */
     public void prerender() {
-        System.out.println("in prerender");
+        logger.fine("in prerender");
     }
     
     /**
