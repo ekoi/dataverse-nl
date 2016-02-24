@@ -28,7 +28,6 @@ package edu.harvard.iq.dvn.core.web.study;
 import com.icesoft.faces.component.ext.HtmlCommandButton;
 //Commenting out: VWP component. -- L.A. 
 //import com.sun.jsfcl.data.DefaultTableDataModel;
-import com.oracle.tools.packager.Log;
 import edu.harvard.iq.dvn.core.study.EditStudyService;
 import edu.harvard.iq.dvn.core.study.Study;
 import edu.harvard.iq.dvn.core.study.StudyAbstract;
