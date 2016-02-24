@@ -34,6 +34,7 @@ import edu.harvard.iq.dvn.core.admin.UserServiceLocal;
 import edu.harvard.iq.dvn.core.admin.VDCUser;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIData;
@@ -52,6 +53,8 @@ import javax.servlet.http.HttpServletRequest;
 @ViewScoped
 @Named("NetworkPrivilegedUsersPage")
 public class NetworkPrivilegedUsersPage extends VDCBaseBean implements java.io.Serializable  {
+    private static final Logger logger = Logger.getLogger(NetworkPrivilegedUsersPage.class.getCanonicalName());
+
     @EJB  EditNetworkPrivilegesService privileges;
     @EJB  NetworkRoleServiceLocal networkRoleService;
     @EJB  UserServiceLocal userService;
@@ -105,11 +108,11 @@ public class NetworkPrivilegedUsersPage extends VDCBaseBean implements java.io.S
     public void preRenderView() {
         if ( isFromPage("NetworkPrivilegedUsersPage") && sessionGet(privileges.getClass().getName())!=null) {
             privileges = (EditNetworkPrivilegesService) sessionGet(privileges.getClass().getName());
-            System.out.println("Getting stateful session bean editNetworkPrivileges ="+getPrivileges());
+            logger.info("Getting stateful session bean editNetworkPrivileges ="+getPrivileges());
             
         } else {
              
-            System.out.println("Putting stateful session bean in request, editNetworkPrivileges ="+getPrivileges());
+            logger.info("Putting stateful session bean in request, editNetworkPrivileges ="+getPrivileges());
             privileges.init();
             sessionPut( getPrivileges().getClass().getName(),privileges);
             //sessionPut( (studyService.getClass().getName() + "."  + studyId.toString()), studyService);
@@ -250,7 +253,7 @@ public class NetworkPrivilegedUsersPage extends VDCBaseBean implements java.io.S
 
     
     public void test(ActionEvent ae) {
-        System.out.println("this is a test");
+        logger.fine("this is a test");
     }
 
     private boolean userNotFound;

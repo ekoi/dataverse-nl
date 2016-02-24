@@ -55,6 +55,8 @@ import edu.harvard.iq.dvn.core.web.common.VDCSessionBean;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.EJBs;
@@ -124,6 +126,7 @@ public class LoginFilter implements Filter {
     // this value is null, this filter instance is not currently
     // configured.
     private FilterConfig filterConfig = null;
+    private static final Logger logger = Logger.getLogger(LoginFilter.class.getCanonicalName());
 
     public LoginFilter() {
     }
@@ -135,7 +138,7 @@ public class LoginFilter implements Filter {
     /**
      *
      * @param request The servlet request we are processing
-     * @param result The servlet response we are creating
+     * @param response The servlet response we are creating
      * @param chain The filter chain we are processing
      *
      * @exception IOException if an input/output error occurs
@@ -260,14 +263,14 @@ public class LoginFilter implements Filter {
 
                 try {
                     chain.doFilter(request, response);
-                } catch (Throwable t) {
+                } catch (Exception ex) {
                     //
                     // If an exception is thrown somewhere down the filter chain,
                     // we still want to execute our after processing, and then
                     // rethrow the problem after that.
                     //
 
-                    t.printStackTrace();
+                    logger.log(Level.WARNING, null, ex);
                 }
             }
 
@@ -964,7 +967,7 @@ public class LoginFilter implements Filter {
                 studyLockMessage = "Study upload details: " + study.getGlobalId() + " - " + studyLock.getDetail();
             }
         }
-        System.out.println("Study locked = " + studyLock != null);
+        logger.log(Level.INFO, "Study locked = {0}", studyLock != null);
 
         return studyLockMessage;
 

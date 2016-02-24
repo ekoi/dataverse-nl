@@ -377,7 +377,7 @@ public class TermsOfUsePage extends VDCBaseBean {
                     // if the file does not exist, there sure 
                     // isn't a license/terms of use for it!
                 } else {
-                    ex.printStackTrace();
+                    logger.log(Level.WARNING, null, ex);
                 }
             }
         }

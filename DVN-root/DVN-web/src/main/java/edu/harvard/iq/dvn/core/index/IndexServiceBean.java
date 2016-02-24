@@ -231,9 +231,9 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
                     updateStudiesInCollections ();
                 } 
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             mailService.sendIndexUpdateErrorNotification(vdcNetworkService.find().getSystemEmail(), vdcNetworkService.find().getName());
-            e.printStackTrace();
+            logger.log(Level.WARNING, null, e);
         }
     }
 
@@ -275,7 +275,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
 
 
         } catch (JMSException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         } finally {
             try {
                 if (sender != null) {
@@ -288,7 +288,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
                     conn.close();
                 }
             } catch (JMSException ex) {
-                ex.printStackTrace();
+                logger.log(Level.WARNING, null, ex);
             }
         }
     }
@@ -717,12 +717,11 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
                                 } catch (Exception ex) {
                                     ioProblem = true;
                                     ioProblemCount++;
-                                    logger.severe("Caught exception attempting to re-index re-linked study " + linkedStudy.getId() + "; " + ex.getMessage());
-                                    ex.printStackTrace();
+                                    logger.log(Level.SEVERE, "Caught exception attempting to re-index re-linked study " + linkedStudy.getId(), ex);
                                     indexSuccess = false; 
                                 }
                             } else {
-                                logger.fine("Could not delete study "+linkedStudy.getId()+" from index; skipping reindexing.");
+                                logger.warning("Could not delete study "+linkedStudy.getId()+" from index; skipping reindexing.");
                             }
                             
                             if (!indexSuccess) {
@@ -741,9 +740,8 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
 
         } catch (Exception ex) {
             ioProblem = true;
-            ioProblemCount++; 
-            logger.severe("Caught exception while trying to update studies in collections: "+ex.getMessage());
-            ex.printStackTrace();
+            ioProblemCount++;
+            logger.log(Level.SEVERE, "Caught exception while trying to update studies in collections", ex);
         } finally {
             // delete the lock file:
             if (collReindexLockFile.exists()) {
@@ -848,7 +846,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         try {
             matchingStudyIds = indexer.search(query);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
 
         return matchingStudyIds;
@@ -865,7 +863,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
             try {
                 matchingStudyIds = indexer.search(studyIds, searchTerms);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                logger.log(Level.WARNING, null, ex);
             }
         }
         return matchingStudyIds;
@@ -879,7 +877,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         try {
             matchingStudyIds = indexer.search(studyIds, searchTerms);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         return matchingStudyIds == null ? new ArrayList() : matchingStudyIds;
     }
@@ -894,7 +892,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         try {
             resultsWithFacets = indexer.searchNew(dvnQuery);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         return resultsWithFacets;
     }
@@ -953,7 +951,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         try {
             matchingStudyIds = indexer.search(studyIds, searchTerms);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         return matchingStudyIds == null ? new ArrayList() : matchingStudyIds;
     }
@@ -964,7 +962,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         try {
             matchingStudyIds = indexer.search(searchTerm);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         return matchingStudyIds == null ? new ArrayList() : matchingStudyIds;
     }
@@ -996,7 +994,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         try {
             matchingVarIds = indexer.searchVariables(studyIds, searchTerm);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         Map variableMap = new HashMap();
         return matchingVarIds;
@@ -1013,7 +1011,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
             try {
                 matchingStudyIds = indexer.searchVariables(studyIds, searchTerm);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                logger.log(Level.WARNING, null, ex);
             }
         }
         return matchingStudyIds;
@@ -1026,7 +1024,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         try {
             matchingStudyIds = indexer.searchVariables(studyIds, searchTerm);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         return matchingStudyIds == null ? new ArrayList() : matchingStudyIds;
     }
@@ -1039,7 +1037,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         try {
             matchingStudyIds = indexer.searchVersionUnf(studyIds, unf);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         return matchingStudyIds == null ? new ArrayList() : matchingStudyIds;
     }
@@ -1051,7 +1049,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         try {
             matchingStudyIds = indexer.query(adhocQuery);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, null, ex);
         }
         return matchingStudyIds == null ? new ArrayList() : matchingStudyIds;
     }

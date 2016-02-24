@@ -87,7 +87,7 @@ import org.apache.commons.logging.LogFactory;
 @Named("UtilitiesPage")
 public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable   {
 
-    private static final Logger logger = Logger.getLogger("edu.harvard.iq.dvn.core.web.networkAdmin.UtilitiesPage");
+    private static final Logger logger = Logger.getLogger(UtilitiesPage.class.getCanonicalName());
             
     @EJB StudyServiceLocal studyService;
     @EJB StudyFileServiceLocal studyFileService;
@@ -117,7 +117,7 @@ public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable  
         super.init();
         vdcId = getVDCRequestBean().getCurrentVDCId();
         selectedPanel = getRequestParam("selectedPanel");
-        System.out.print("In utilites init...");
+        logger.fine("In utilites init...");
     }
 
     public String getSelectedPanel() {

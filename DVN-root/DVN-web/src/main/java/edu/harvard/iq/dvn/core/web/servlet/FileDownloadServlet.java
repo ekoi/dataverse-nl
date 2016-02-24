@@ -1925,7 +1925,7 @@ public class FileDownloadServlet extends HttpServlet {
         String fileId = req.getParameter("fileId");
         String studyId = req.getParameter("studyId");
         String versionNumber = req.getParameter("versionNumber");
-        System.out.print("zip multiple files version number" + versionNumber);
+        dbgLog.info("zip multiple files version number" + versionNumber);
         Study study = null;
         Collection files = new ArrayList();
         boolean createDirectoriesForCategories = false;
@@ -2159,7 +2159,7 @@ public class FileDownloadServlet extends HttpServlet {
                 StudyFile file = studyFileService.getStudyFile(new Long(fid));
                 Long versionNum = null; 
                 if (versionNumber != null) versionNum = Long.valueOf(versionNumber).longValue();   
-                System.out.print("versionNumber " + versionNumber);
+                dbgLog.info("versionNumber " + versionNumber);
                 StudyVersion sv = file.getStudy().getStudyVersionByNumber(versionNum);
                 GuestBookResponse guestbookResponse = (GuestBookResponse) vdcSession.getGuestbookResponseMap().get("guestBookResponse_" + file.getStudy().getId());
                 if (guestbookResponse == null) {
