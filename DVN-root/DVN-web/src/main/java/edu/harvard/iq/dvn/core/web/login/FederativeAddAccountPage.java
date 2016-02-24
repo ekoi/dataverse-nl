@@ -1,7 +1,6 @@
 // Licence info to be added
 package edu.harvard.iq.dvn.core.web.login;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -14,21 +13,15 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import nl.knaw.dans.dataverse.Rule;
-import nl.knaw.dans.dataverse.RuleCondition;
 import nl.knaw.dans.dataverse.RuleExecutionSet;
-import nl.knaw.dans.dataverse.RuleGoal;
 import nl.knaw.dans.dataverse.RuleServiceLocal;
 import edu.harvard.iq.dvn.core.admin.EditUserService;
-import edu.harvard.iq.dvn.core.admin.Role;
 import edu.harvard.iq.dvn.core.admin.RoleServiceLocal;
 import edu.harvard.iq.dvn.core.admin.UserServiceLocal;
 import edu.harvard.iq.dvn.core.admin.VDCUser;
 import edu.harvard.iq.dvn.core.mail.MailServiceLocal;
 import edu.harvard.iq.dvn.core.study.Study;
 import edu.harvard.iq.dvn.core.study.StudyServiceLocal;
-import edu.harvard.iq.dvn.core.util.StringUtil;
-import edu.harvard.iq.dvn.core.vdc.VDC;
 import edu.harvard.iq.dvn.core.vdc.VDCServiceLocal;
 import edu.harvard.iq.dvn.core.web.admin.OptionsPage.RoleListItem;
 import edu.harvard.iq.dvn.core.web.common.StatusMessage;
@@ -38,7 +31,8 @@ import edu.harvard.iq.dvn.core.web.common.VDCBaseBean;
 @Named("FederativeAddAccountPage")
 public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Serializable {
 
-    @EJB
+	private static final long serialVersionUID = 1L;
+	@EJB
     EditUserService editUserService;
     @EJB
     UserServiceLocal userService;
@@ -54,7 +48,7 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
     @EJB 
     RuleServiceLocal ruleService;
     
-    private final static Logger LOGGER = Logger.getLogger(FederativeAddAccountPage.class.getPackage().getName());
+    private final static Logger LOGGER = Logger.getLogger(FederativeAddAccountPage.class.getName());
     
     private String username;
     private String givenname;
@@ -341,10 +335,6 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
     		LOGGER.log(Level.SEVERE, "User is null or the username is empty");
     		throw new RuntimeException("Username is empty.");
     	} else {
-	        String forwardPage = null;
-	        Long contributorRequestVdcId = (long) 1;
-	        String workflowValue = null;
-	
 	        //trying to set proper permissions
 	        String workflowusertype = getUsertype();
 	
@@ -356,21 +346,18 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
 	            user.setActive(true);
 	            editUserService.save();
 	            LOGGER.log(Level.INFO, "Trying to create user");
-	            if (StringUtil.isEmpty(workflowValue)) {
-	                StatusMessage msg = new StatusMessage();
-	                msg.setMessageText("User account created successfully.");
-	                msg.setStyleClass("successMessage");
-	                getRequestMap().put("statusMessage", msg);
-	                HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-	                Object o = session.getAttribute(FederativeLoginPage.SHIB_PROPS_SESSION);
-	                if (o != null && o instanceof Map) {
-	                	Map<String, String> shibProps = (Map<String, String>)o;
-	                	RuleExecutionSet res = new RuleExecutionSet(ruleService,  vdcService, userService);
-	                	res.setUserRole(shibProps, user);
-	                } else 
-	                	LOGGER.log(Level.SEVERE, "No shib props in the session");
-	                forwardPage = "viewAccount";
-	            }    
+	            StatusMessage msg = new StatusMessage();
+                msg.setMessageText("User account created successfully.");
+                msg.setStyleClass("successMessage");
+                getRequestMap().put("statusMessage", msg);
+                HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+                Object o = session.getAttribute(FederativeLoginPage.SHIB_PROPS_SESSION);
+                if (o != null && o instanceof Map) {
+                	Map<String, String> shibProps = (Map<String, String>)o;
+                	RuleExecutionSet res = new RuleExecutionSet(ruleService,  vdcService, userService);
+                	res.setUserRole(shibProps, user);
+                } else 
+	                LOGGER.log(Level.SEVERE, "No shib props in the session");
 	            
 	            LoginWorkflowBean loginWorkflowBean = (LoginWorkflowBean) FederativeAddAccountPage.getBean("LoginWorkflowBean");
 	            loginWorkflowBean.processAddAccount(user);

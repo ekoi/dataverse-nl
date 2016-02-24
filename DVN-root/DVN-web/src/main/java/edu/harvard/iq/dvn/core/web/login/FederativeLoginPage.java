@@ -46,7 +46,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     VDCNetworkServiceLocal vdcNetworkService;
     // ---
     
-    private final static Logger LOGGER = Logger.getLogger(FederativeLoginPage.class.getPackage().getName());
+    private final static Logger LOGGER = Logger.getLogger(FederativeLoginPage.class.getName());
     String refererUrl = "";
     private String errMessage = "";
     String userId = "";
