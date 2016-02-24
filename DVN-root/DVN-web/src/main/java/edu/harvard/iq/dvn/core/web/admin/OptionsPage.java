@@ -1873,7 +1873,7 @@ public class OptionsPage extends VDCBaseBean  implements java.io.Serializable {
                         URL url = new URL("http://" + PropertyUtil.getHostUrl() + "/dvn/dv/" + vdc.getAlias());
                         TwitterUtil.tweet(tc, message, url);
                     } catch (MalformedURLException ex) {
-                        Logger.getLogger(PrivilegedUsersPage.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(OptionsPage.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     // TODO: DO we need NetworkStatBean? We need to investigate if this is old code and can just be removed

@@ -2168,7 +2168,7 @@ public class Indexer implements java.io.Serializable  {
                         Query query = parser.parse(queryString);
                         collectionQueries.add(query);
                     } catch (org.apache.lucene.queryParser.ParseException ex) {
-                        Logger.getLogger(StudyListingPage.class.getName()).log(Level.SEVERE, null, ex);
+                        logger.log(Level.SEVERE, null, ex);
                     }
                 }
             } else {
@@ -2220,7 +2220,7 @@ public class Indexer implements java.io.Serializable  {
                     logger.fine("staticCollectionQuery: " + staticColQuery);
                     collectionQueries.add(staticColQuery);
                 } catch (org.apache.lucene.queryParser.ParseException ex) {
-                    Logger.getLogger(AdvSearchPage.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -2237,7 +2237,7 @@ public class Indexer implements java.io.Serializable  {
         try {
             dvnOwnerIdQuery = parser.parse("dvOwnerId:" + vdc.getId().toString());
         } catch (org.apache.lucene.queryParser.ParseException ex) {
-            Logger.getLogger(AdvSearchPage.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         return dvnOwnerIdQuery;
     }
@@ -2249,7 +2249,7 @@ public class Indexer implements java.io.Serializable  {
         try {
             dvNetworkIdQuery = parser.parse("dvNetworkId:" + dvNetworkId.toString());
         } catch (org.apache.lucene.queryParser.ParseException ex) {
-            Logger.getLogger(AdvSearchPage.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             dvNetworkIdQuery = null; 
         }
         return dvNetworkIdQuery;
@@ -2262,7 +2262,7 @@ public class Indexer implements java.io.Serializable  {
         try {
             dvNetworkIdQuery = parser.parse("ownerDvNetworkId:" + dvNetworkId.toString());
         } catch (org.apache.lucene.queryParser.ParseException ex) {
-            Logger.getLogger(AdvSearchPage.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             dvNetworkIdQuery = null; 
         }
         return dvNetworkIdQuery;
