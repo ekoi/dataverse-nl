@@ -171,39 +171,4 @@ public class RuleExecutionSet {
 		LOGGER.log(Level.INFO, "Add the roles to the current user "
 				+ "so that the user can create a study without logout and then login again.");
 	}
-	
-//	private void setRoleBasedOnRuleGoals(VDCUser user, Rule searchedRule) {
-//		Collection<RuleGoal> rgList = searchedRule.getRuleGoal();
-//		for (RuleGoal rg : rgList) {
-//			String dvnAlias = rg.getDvnAlias();
-//			VDC vdc = vdcService.findByAlias(dvnAlias);
-//			userService.addVdcRole(user.getId(), vdc.getId(), rg.getRole()
-//					.getName());
-//			LOGGER.log(Level.INFO, "'" + rg.getRole().getName()
-//					+ "' role is assigned to user '" + user.getUserName()
-//					+ "' for dvn alias '" + dvnAlias + "'.");
-//		}
-//	}
-	
-//	private void setRoleToCurrentUserBasedOnRuleGoals(VDCUser user, Rule searchedRule) {
-//		Collection<RuleGoal> rgList = searchedRule.getRuleGoal();
-//		Collection<VDCRole> vr = user.getVdcRoles();
-//		for (RuleGoal rg : rgList) {
-//			String dvnAlias = rg.getDvnAlias();
-//			VDC vdc = vdcService.findByAlias(dvnAlias);
-//			userService.addVdcRole(user.getId(), vdc.getId(), rg.getRole()
-//					.getName());
-//			VDCRole vdcRole = new VDCRole();
-//	        vdcRole.setVdcUser(user);
-//	        vdcRole.setVdc(vdc);
-//	        vdcRole.setRole(rg.getRole());
-//			vr.add(vdcRole);
-//			
-//			LOGGER.log(Level.INFO, "'" + rg.getRole().getName()
-//					+ "' role is assigned to user '" + user.getUserName()
-//					+ "' for dvn alias '" + dvnAlias + "'.");
-//		}
-//		user.setVdcRoles(vr);
-//		
-//	}
 }
