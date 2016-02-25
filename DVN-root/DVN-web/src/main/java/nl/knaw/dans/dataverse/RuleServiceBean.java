@@ -1,29 +1,17 @@
-/*
-   Copyright (C) 2005-2012, by the President and Fellows of Harvard College.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-         http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
-   Dataverse Network - A web application to share, preserve and analyze research data.
-   Developed at the Institute for Quantitative Social Science, Harvard University.
-   Version 3.0.
- */
-/*
- * UserServiceBean.java
+/**
+ * Copyright (C) 2015-2016 DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
  *
- * Created on September 21, 2006, 1:46 PM
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package nl.knaw.dans.dataverse;
 
@@ -35,7 +23,10 @@ import javax.persistence.PersistenceContext;
 
 /**
  *
- */
+ * RuleServiceBean.java
+ * 
+ * @author Eko Indarto
+*/
 @Stateless
 public class RuleServiceBean implements RuleServiceLocal {
 
@@ -60,8 +51,8 @@ public class RuleServiceBean implements RuleServiceLocal {
 
 	@Override
 	public Rule findRuleById(Long id) {
-		return (Rule) em.createQuery(
-				"select object(o) from Rule as o where o.id=" + id)
+		return em.createQuery(
+				"select object(o) from Rule as o where o.id=" + id, Rule.class)
 				.getSingleResult();
 	}
 
