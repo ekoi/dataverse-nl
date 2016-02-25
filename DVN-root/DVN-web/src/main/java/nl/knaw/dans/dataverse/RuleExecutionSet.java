@@ -1,5 +1,17 @@
 /**
- * 
+ * Copyright (C) 2015-2016 DANS - Data Archiving and Networked Services (info@dans.knaw.nl)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package nl.knaw.dans.dataverse;
 
@@ -11,18 +23,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.harvard.iq.dvn.core.admin.UserServiceLocal;
+import edu.harvard.iq.dvn.core.admin.VDCRole;
 import edu.harvard.iq.dvn.core.admin.VDCUser;
 import edu.harvard.iq.dvn.core.vdc.VDC;
 import edu.harvard.iq.dvn.core.vdc.VDCServiceLocal;
 import edu.harvard.iq.dvn.core.web.login.FederativeLoginPage;
 
 /**
+ * RuleExecutionSet.java
+ * 
  * @author Eko Indarto
  *
  */
 public class RuleExecutionSet {
 	private final static Logger LOGGER = Logger
-			.getLogger(RuleExecutionSet.class.getPackage().getName());
+			.getLogger(RuleExecutionSet.class.getName());
 	RuleServiceLocal ruleService;
 	VDCServiceLocal vdcService;
 	UserServiceLocal userService;
@@ -52,9 +67,13 @@ public class RuleExecutionSet {
 			} else {
 				LOGGER.log(Level.INFO, "Search rule conditon for " + orgAttrVal);
 				List<Rule> searchedRules = getMatchedRuleCondition(shibProps, ruleList);
-				for (Rule rule: searchedRules)
-				setRoleBasedOnRuleGoals(user, rule);
-				
+				for (Rule rule: searchedRules) {
+				//setRoleBasedOnRuleGoals(user, rule);
+					//save to DB
+					save(user, rule);
+					//so the current user can use his role immediately (without first logout and then login again)
+					setRolesToCurrentUser(user, rule);
+				}
 			}
 		}
 
@@ -123,7 +142,7 @@ public class RuleExecutionSet {
 		return searchedRules;
 	}
 
-	private void setRoleBasedOnRuleGoals(VDCUser user, Rule searchedRule) {
+	private void save(VDCUser user, Rule searchedRule) {
 		Collection<RuleGoal> rgList = searchedRule.getRuleGoal();
 		for (RuleGoal rg : rgList) {
 			String dvnAlias = rg.getDvnAlias();
@@ -132,7 +151,59 @@ public class RuleExecutionSet {
 					.getName());
 			LOGGER.log(Level.INFO, "'" + rg.getRole().getName()
 					+ "' role is assigned to user '" + user.getUserName()
-					+ "' for dvn alias '" + dvnAlias + "'.");
+					+ "' for dvn alias '" + dvnAlias + "'. Save it to the DB.");
 		}
 	}
+	
+	private void setRolesToCurrentUser(VDCUser user, Rule searchedRule) {
+		Collection<RuleGoal> rgList = searchedRule.getRuleGoal();
+		Collection<VDCRole> vr = user.getVdcRoles();
+		for (RuleGoal rg : rgList) {
+			String dvnAlias = rg.getDvnAlias();
+			VDC vdc = vdcService.findByAlias(dvnAlias);
+			VDCRole vdcRole = new VDCRole();
+	        vdcRole.setVdcUser(user);
+	        vdcRole.setVdc(vdc);
+	        vdcRole.setRole(rg.getRole());
+			vr.add(vdcRole);
+		}
+		user.setVdcRoles(vr);
+		LOGGER.log(Level.INFO, "Add the roles to the current user "
+				+ "so that the user can create a study without logout and then login again.");
+	}
+	
+//	private void setRoleBasedOnRuleGoals(VDCUser user, Rule searchedRule) {
+//		Collection<RuleGoal> rgList = searchedRule.getRuleGoal();
+//		for (RuleGoal rg : rgList) {
+//			String dvnAlias = rg.getDvnAlias();
+//			VDC vdc = vdcService.findByAlias(dvnAlias);
+//			userService.addVdcRole(user.getId(), vdc.getId(), rg.getRole()
+//					.getName());
+//			LOGGER.log(Level.INFO, "'" + rg.getRole().getName()
+//					+ "' role is assigned to user '" + user.getUserName()
+//					+ "' for dvn alias '" + dvnAlias + "'.");
+//		}
+//	}
+	
+//	private void setRoleToCurrentUserBasedOnRuleGoals(VDCUser user, Rule searchedRule) {
+//		Collection<RuleGoal> rgList = searchedRule.getRuleGoal();
+//		Collection<VDCRole> vr = user.getVdcRoles();
+//		for (RuleGoal rg : rgList) {
+//			String dvnAlias = rg.getDvnAlias();
+//			VDC vdc = vdcService.findByAlias(dvnAlias);
+//			userService.addVdcRole(user.getId(), vdc.getId(), rg.getRole()
+//					.getName());
+//			VDCRole vdcRole = new VDCRole();
+//	        vdcRole.setVdcUser(user);
+//	        vdcRole.setVdc(vdc);
+//	        vdcRole.setRole(rg.getRole());
+//			vr.add(vdcRole);
+//			
+//			LOGGER.log(Level.INFO, "'" + rg.getRole().getName()
+//					+ "' role is assigned to user '" + user.getUserName()
+//					+ "' for dvn alias '" + dvnAlias + "'.");
+//		}
+//		user.setVdcRoles(vr);
+//		
+//	}
 }
