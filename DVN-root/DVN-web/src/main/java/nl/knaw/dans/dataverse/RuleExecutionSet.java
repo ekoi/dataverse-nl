@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import edu.harvard.iq.dvn.core.admin.UserServiceLocal;
 import edu.harvard.iq.dvn.core.admin.VDCRole;
@@ -60,7 +61,7 @@ public class RuleExecutionSet {
 			// shibProps ("schacHomeOrganization","vu.nl"),
 			// ("entitlement","urn:x-surfnet:dans.knaw.nl:dataversenl:role:dataset-creator")
 			// the "vu.nl" as Rule name and "entitlement" is the RuleCondition
-			List<Rule> ruleList = ruleService.findRuleByOrgName(orgAttrVal);
+			List<Rule> ruleList = ruleService.findRulesByOrgName(orgAttrVal);
 			if (ruleList == null || ruleList.isEmpty()) {
 				LOGGER.log(Level.INFO, "No rule is implemented for "
 						+ orgAttrVal);
@@ -127,8 +128,9 @@ public class RuleExecutionSet {
 					// rc.getPattern() =
 					// urn:x-surfnet:dans.knaw.nl:dataversenl:role:dataset-creator
 					// (from the DB, column pattern)
+					Pattern pattern = Pattern.compile(rc.getPattern());
 					String attrValFromShib = shibProps.get(rc.getAttributename());
-					if ((attrValFromShib != null && !attrValFromShib.trim().equals("")) && attrValFromShib.equals(rc.getPattern())) {
+					if ((attrValFromShib != null && !attrValFromShib.trim().equals("")) && pattern.matcher(attrValFromShib).matches()) {
 						matchedcondition = true;
 						break;
 					}
