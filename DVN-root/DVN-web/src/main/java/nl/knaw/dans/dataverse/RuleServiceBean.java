@@ -58,7 +58,7 @@ public class RuleServiceBean implements RuleServiceLocal {
 	}
 
 	@Override
-	public Rule fineRuleByCondition(RuleCondition rc) {
+	public Rule findRuleByCondition(RuleCondition rc) {
 		// TODO Auto-generated method stub
 		return null;
 	}

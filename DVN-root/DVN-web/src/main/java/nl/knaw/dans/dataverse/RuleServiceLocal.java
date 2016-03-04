@@ -33,6 +33,6 @@ public interface RuleServiceLocal extends java.io.Serializable {
 
 	public List<Rule> findRulesByOrgName(String orgName);
 
-	public Rule fineRuleByCondition(RuleCondition rc);
+	public Rule findRuleByCondition(RuleCondition rc);
 
 }

@@ -112,7 +112,7 @@ public class RuleExecutionSet {
 	 
 	 */
 
-	private List<Rule> getMatchedRuleCondition(Map<String, String> shibProps, List<Rule> ruleList) {
+	public List<Rule> getMatchedRuleCondition(Map<String, String> shibProps, List<Rule> ruleList) {
 		List<Rule> searchedRules = new ArrayList<Rule>();
 		for (Rule rule : ruleList) {
 			Collection<RuleCondition> rcList = rule.getRuleCondition();
