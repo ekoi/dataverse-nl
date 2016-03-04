@@ -4,7 +4,7 @@ This document lists changes to the Dataverse Network software that [DANS][DANS] 
 
 Versioning does not adhere to [SemVer](http://semver.org); new releases will not have major or minor changes. DANS's changes form a patch, with sequential numbering. The first versions of the patch were not described in a changelog.
 
-## Unreleased
+## Unreleased (2016-03)
 
 Added:
 
@@ -33,7 +33,7 @@ Changed:
 
 - The message that was shown to a user in case of an error reading user attributes from Shibboleth is more helpful
 
-## Version 3.6.2-dans-*
+## Version 3.6.2-dans-* (2014-05)
 
 The earliest DANS version of DVN 3.6.2 is based on the adapted version of DVN 3.3 that was in use at Utrecht University. Generally, the changes introduced by UU/Everett were migrated to the then current release. It is different to the original DVN in the following ways:
 
