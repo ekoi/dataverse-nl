@@ -33,18 +33,97 @@ public class RuleExecutionSetTest {
         allRules = trs.findAll();
     }
 
+    /**
+     * A user from an organisation for which no rules are defined should not match any rules.
+     * @throws Exception
+     */
     @Test
     public void testMatchNoRules() throws Exception {
         Map<String, String> dans = createUserProps("Companjen","Ben",null,"ben.companjen@dans.knaw.nl","dans.knaw.nl",null,"staff");
         assertTrue("No rules should match for DANS", res.getMatchedRuleCondition(dans,trs.findRulesByOrgName("dans.knaw.nl")).isEmpty());
     }
 
+    /**
+     * A user with a PThU email address and entitlement should match the entitled PThU users rule.
+     * @throws Exception
+     */
     @Test
-    public void testGetMatchingRules() throws Exception {
+    public void testGetMatchingRulesSingleEmail() throws Exception {
         Map<String,String> pthu = createUserProps("User","Test","de","test.user@pthu.nl","vu.nl",CREATOR,"employee");
 
         List<Rule> matchingRules = res.getMatchedRuleCondition(pthu, allRules);
-        //assertTrue("PThU email matches", );
+        boolean pthuRuleFound = false;
+        for (Rule r : matchingRules) {
+            if (r.getDescription().equals("entitled PThU users")) {
+                pthuRuleFound = true;
+            }
+        }
+        assertTrue("PThU email matches", pthuRuleFound);
+
+    }
+
+    /**
+     * A user with a PThU email address without the creator entitlement should not match the PThU entitled users rule.
+     * @throws Exception
+     */
+    @Test
+    public void testGetMatchingRulesSingleEmailNoEntitlement() throws Exception {
+        Map<String,String> pthu = createUserProps("User","Test","de","test.user@pthu.nl","vu.nl",null,"employee");
+
+        List<Rule> matchingRules = res.getMatchedRuleCondition(pthu, allRules);
+        boolean pthuRuleFound = false;
+        for (Rule r : matchingRules) {
+            if (r.getDescription().equals("entitled PThU users")) {
+                pthuRuleFound = true;
+            }
+        }
+        assertFalse("PThU rule should not match", pthuRuleFound);
+
+    }
+
+    /**
+     * A user with multiple email addresses asserted including one '@pthu.nl' should match the PThU email address rule.
+     * @throws Exception
+     */
+    @Test
+    public void testGetMatchingRulesMultiEmail() throws Exception {
+        Map<String,String> pthu = createUserProps("User","Test","de","test.user@pthu.nl;test.user@vu.nl","vu.nl",CREATOR,"employee");
+
+        List<Rule> matchingRules = res.getMatchedRuleCondition(pthu, trs.findRulesByOrgName(pthu.get(ATTR_NAME_ORG)));
+        boolean pthuRuleFound = false;
+        boolean vuRuleFound = false;
+        for (Rule r : matchingRules) {
+            if (r.getDescription().equals("entitled PThU users")) {
+                pthuRuleFound = true;
+            } else if (r.getDescription().equals("entitled VU users")) {
+                vuRuleFound = true;
+            }
+        }
+        assertTrue("PThU email matches", pthuRuleFound);
+        assertTrue("VU rule matches", vuRuleFound);
+
+    }
+
+    /**
+     * A VU user without PThU email address should not match the rule that checks for a PThU email address.
+     * @throws Exception
+     */
+    @Test
+    public void testGetMatchingRulesVUEmail() throws Exception {
+        Map<String,String> pthu = createUserProps("User","Test","de","test.user@vu.nl","vu.nl",CREATOR,"employee");
+
+        List<Rule> matchingRules = res.getMatchedRuleCondition(pthu, trs.findRulesByOrgName(pthu.get(ATTR_NAME_ORG)));
+        boolean pthuRuleFound = false;
+        boolean vuRuleFound = false;
+        for (Rule r : matchingRules) {
+            if (r.getDescription().equals("entitled PThU users")) {
+                pthuRuleFound = true;
+            } else if (r.getDescription().equals("entitled VU users")) {
+                vuRuleFound = true;
+            }
+        }
+        assertFalse("PThU email rule matches", pthuRuleFound);
+        assertTrue("VU rule matches", vuRuleFound);
 
     }
 
@@ -67,9 +146,15 @@ public class RuleExecutionSetTest {
 
         public TestRuleService() {
             allRules = new ArrayList<Rule>();
-            addRule(createRule("vu.nl", "all VU users"));
-            addRule(createRule("vu.nl", "entitled VU users"));
-            addRule(createRule("vu.nl", "entitled PThU users"));
+            Rule r1 = createRule("vu.nl", "all VU users");
+            addRule(r1);
+            Rule r2 = createRule("vu.nl", "entitled VU users");
+            addCondition(r2, ATTR_NAME_ENTITLEMENT, CREATOR);
+            addRule(r2);
+            Rule r3 = createRule("vu.nl", "entitled PThU users");
+            addCondition(r3, ATTR_NAME_ENTITLEMENT, CREATOR);
+            addCondition(r3, ATTR_NAME_EMAIL, "^[^@]+@pthu\\.nl$");
+            addRule(r3);
 
         }
 
@@ -81,6 +166,19 @@ public class RuleExecutionSetTest {
             Rule rule = new Rule();
             rule.setOrgName(orgName);
             rule.setDescription(description);
+            return rule;
+        }
+
+        private Rule addCondition(Rule rule, String attribute, String pattern) {
+            RuleCondition rc = new RuleCondition();
+            rc.setAttributename(attribute);
+            rc.setPattern(pattern);
+            Collection<RuleCondition> rcs = rule.getRuleCondition();
+            if (rcs == null) {
+                rcs = new ArrayList<RuleCondition>();
+            }
+            rcs.add(rc);
+            rule.setRuleCondition(rcs);
             return rule;
         }
 
