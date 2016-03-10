@@ -99,7 +99,7 @@ public class RuleExecutionSetTest {
                 vuRuleFound = true;
             }
         }
-        assertTrue("PThU email matches", pthuRuleFound);
+        assertTrue("PThU entitled users rule should match", pthuRuleFound);
         assertTrue("VU rule matches", vuRuleFound);
 
     }
@@ -122,8 +122,8 @@ public class RuleExecutionSetTest {
                 vuRuleFound = true;
             }
         }
-        assertFalse("PThU email rule matches", pthuRuleFound);
-        assertTrue("VU rule matches", vuRuleFound);
+        assertFalse("PThU users rule should not match", pthuRuleFound);
+        assertTrue("VU rule should match", vuRuleFound);
 
     }
 
