@@ -3,8 +3,6 @@ package nl.knaw.dans.dataverse;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -26,13 +24,11 @@ public class RuleExecutionSetTest {
     private final String CREATOR = "urn:x-surfnet:dans.knaw.nl:dataversenl:role:dataset-creator";
 
     private List<Rule> allRules;
-    @EJB
     private RuleExecutionSet res;
     private TestRuleService trs;
 
     @Before
     public void setUp() {
-//        EJBContainer ec = EJBContainer.createEJBContainer();
         trs = new TestRuleService();
         res = new RuleExecutionSet(trs, null, null);
         allRules = trs.findAll();
