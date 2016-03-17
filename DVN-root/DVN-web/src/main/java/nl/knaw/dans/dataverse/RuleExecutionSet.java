@@ -69,7 +69,7 @@ public class RuleExecutionSet {
 				LOGGER.log(Level.INFO, "Search rule conditon for " + orgAttrVal);
 				List<Rule> searchedRules = getMatchedRuleCondition(shibProps, ruleList);
 				for (Rule rule: searchedRules) {
-				//setRoleBasedOnRuleGoals(user, rule);
+					//setRoleBasedOnRuleGoals(user, rule);
 					//save to DB
 					save(user, rule);
 					//so the current user can use his role immediately (without first logout and then login again)
@@ -87,29 +87,29 @@ public class RuleExecutionSet {
 	 3    	dans
 	 4      vu.nl
 	 5      vu.nl
-	 
+
 	 The RULE_CONDITION table has the following records:
 	 id 	ATTRIBUTE		PATTERN		RULE_ID
 	 1		entitlement		abc			1
 	 2      affiliation 	employee	1
 	 3      entitlement     abc         2
 	 4      entitlement		zzz	        5
-	 
+
 	 Suppose, the "schacHomeOrganization" properties contains vu.nl 
 	 so from the "setUserRole" method, we have a rulelist that contains 2 element namely 
 	 {(1,vu.nl) has rule condition (1, entitlement,abc) and (2, affilition,employee), 
 	 (2,vu.nl) has rule condition (3, entitlement,abc), 
 	 (4,vu.nl) has no rule condition,
 	 (5,vu.nl) has rule condition (4, entitlement,zzz)}
-	 
+
 	 Case 1. The request contains rule condition where entitlement attribute with value 'abc' and affiliation with value 'xxx'
-	 
+
 	 Case 2. The request contains rule condition where entitlement with value 'abc'
-	 
+
 	 Case 3. The request contains no rule condition
-	 
+
 	 Case 4. The request contains rule condition where only entitlement with value 'zzz"
-	 
+
 	 */
 
 	public List<Rule> getMatchedRuleCondition(Map<String, String> shibProps, List<Rule> ruleList) {
@@ -121,8 +121,7 @@ public class RuleExecutionSet {
 				//return rule; //leave this method.
 				searchedRules.add(rule);
 			} else {
-				boolean matchedcondition = false;
-				List<Boolean> machedconditions = new ArrayList<Boolean>();
+				boolean matchedcondition = true;
 				for (RuleCondition rc : rcList) {
 					// Ex: rc.getAttributename() = entitlement (from the DB, column
 					// attribute_name)
@@ -131,17 +130,20 @@ public class RuleExecutionSet {
 					// (from the DB, column pattern)
 					Pattern pattern = Pattern.compile(rc.getPattern());
 					String attrValFromShib = shibProps.get(rc.getAttributename());
-					
+
 					if ((attrValFromShib != null && !attrValFromShib.trim().equals(""))) {
 						if (rc.getAttributename().equals("mail")) 
-							machedconditions.add(mailIsMatched(rc, pattern, attrValFromShib));
+							matchedcondition = mailIsMatched(pattern, attrValFromShib);
 						else
-							machedconditions.add(pattern.matcher(attrValFromShib).matches());
-					} else 
-						machedconditions.add(false);
+							matchedcondition = pattern.matcher(attrValFromShib).matches();
+					} else {
+						matchedcondition = false;
+					}
+					if (!matchedcondition)
+						break;
 				} 	
-					
-				if (!machedconditions.contains(false)) {
+
+				if (matchedcondition) {
 					searchedRules.add(rule);
 				}
 			}
@@ -149,8 +151,7 @@ public class RuleExecutionSet {
 		return searchedRules;
 	}
 
-	private boolean mailIsMatched(RuleCondition rc, Pattern pattern,
-			String attrValFromShib) {
+	private boolean mailIsMatched(Pattern pattern, String attrValFromShib) {
 		// Multiple emails where delimited by ;
 		String mails[] = attrValFromShib.split(";");
 		for (String mail : mails) {
@@ -174,7 +175,7 @@ public class RuleExecutionSet {
 					+ "' for dvn alias '" + dvnAlias + "'. Save it to the DB.");
 		}
 	}
-	
+
 	private void setRolesToCurrentUser(VDCUser user, Rule searchedRule) {
 		Collection<RuleGoal> rgList = searchedRule.getRuleGoal();
 		Collection<VDCRole> vr = user.getVdcRoles();
@@ -182,9 +183,9 @@ public class RuleExecutionSet {
 			String dvnAlias = rg.getDvnAlias();
 			VDC vdc = vdcService.findByAlias(dvnAlias);
 			VDCRole vdcRole = new VDCRole();
-	        vdcRole.setVdcUser(user);
-	        vdcRole.setVdc(vdc);
-	        vdcRole.setRole(rg.getRole());
+			vdcRole.setVdcUser(user);
+			vdcRole.setVdc(vdc);
+			vdcRole.setRole(rg.getRole());
 			vr.add(vdcRole);
 		}
 		user.setVdcRoles(vr);
