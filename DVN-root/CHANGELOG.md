@@ -4,7 +4,7 @@ This document lists changes to the Dataverse Network software that [DANS][DANS] 
 
 Versioning does not adhere to [SemVer](http://semver.org); new releases will not have major or minor changes. DANS's changes form a patch, with sequential numbering. The first versions of the patch were not described in a changelog.
 
-## Unreleased (2016-03)
+## Version 3.6.2-dans-14 (2016-03)
 
 Added:
 
@@ -13,6 +13,7 @@ Added:
 Changed:
 
 - A user can log in through SURFconext from any page and be redirected to the page that she left instead of a dead end
+- When the account terms of use change, a user will be redirected properly
 - Lots of `printStacktrace` and `println` have been replaced by calls to loggers
 
 ## Version 3.6.2-dans-12
