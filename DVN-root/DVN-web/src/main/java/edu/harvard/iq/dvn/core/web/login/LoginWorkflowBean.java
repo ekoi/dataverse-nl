@@ -162,7 +162,7 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
             nextPage = updateSessionAndRedirect();
         } else {
             
-            nextPage = "/login/AccountTermsOfUsePage?faces-redirect=true";
+            nextPage = "/login/AccountTermsOfUsePage.xhtml?faces-redirect=true";
         }
         return nextPage;
     }
@@ -173,7 +173,7 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
         if (workflowType == null) {
             nextPage = "/login/AccountPage?faces-redirect=true&userId=" + user.getId() + getContextSuffix();
         } else if (vdcNetworkService.find().isTermsOfUseEnabled()) {
-            nextPage = "/login/AccountTermsOfUsePage?faces-redirect=true";
+            nextPage = "/login/AccountTermsOfUsePage.xhtml?faces-redirect=true";
         } else {
             if (workflowType.equals(WORKFLOW_TYPE_CONTRIBUTOR)) {
                 nextPage = "/login/ContributorRequestSuccessPage?faces-redirect=true" + getContextSuffix();
