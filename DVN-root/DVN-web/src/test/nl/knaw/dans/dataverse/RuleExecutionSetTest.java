@@ -3,36 +3,50 @@ package nl.knaw.dans.dataverse;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
 /**
- * Created by ben on 04-03-16.
+ * Test the rule system for assigning roles using SAML attributes.
  */
 public class RuleExecutionSetTest {
 
-    private static final String ATTR_NAME_EMAIL = "mail";
-    private static final String ATTR_NAME_SURNAME = "sn";
-    private static final String ATTR_NAME_PREFIX = "prefix";
-    private static final String ATTR_NAME_GIVENNAME = "givenName";
-    private static final String ATTR_NAME_ROLE = "eduPersonAffiliation";
-    public static final String ATTR_NAME_ORG = "schacHomeOrganization";
-    private static final String ATTR_NAME_PRINCIPAL = "eduPersonPrincipalName";
-    public static final String ATTR_NAME_ENTITLEMENT = "entitlement";
-    private static final String CREATOR = "urn:x-surfnet:dans.knaw.nl:dataversenl:role:dataset-creator";
+    private final String ATTR_NAME_EMAIL = "mail";
+    private final String ATTR_NAME_SURNAME = "sn";
+    private final String ATTR_NAME_PREFIX = "prefix";
+    private final String ATTR_NAME_GIVENNAME = "givenName";
+    private final String ATTR_NAME_ROLE = "eduPersonAffiliation";
+    public final String ATTR_NAME_ORG = "schacHomeOrganization";
+    private final String ATTR_NAME_PRINCIPAL = "eduPersonPrincipalName";
+    public final String ATTR_NAME_ENTITLEMENT = "entitlement";
+    private final String CREATOR = "urn:x-surfnet:dans.knaw.nl:dataversenl:role:dataset-creator";
 
-    private static List<Rule> allRules;
-    private static RuleExecutionSet res;
-    private static TestRuleService trs;
+    private List<Rule> allRules;
+    @EJB
+    private RuleExecutionSet res;
+    private TestRuleService trs;
 
     @Before
     public void setUp() {
+//        EJBContainer ec = EJBContainer.createEJBContainer();
         trs = new TestRuleService();
         res = new RuleExecutionSet(trs, null, null);
         allRules = trs.findAll();
     }
 
+    /**
+     * Test that we have the right pattern for regular expression matching.
+     */
+    @Test
+    public void testBasicPatterns() throws Exception {
+        assertTrue("CREATOR pattern should match CREATOR string", Pattern.matches(CREATOR,CREATOR));
+        assertTrue("DANS pattern should match DANSer's email", Pattern.matches("^[^@]+@dans.knaw.nl$", "de.danser@dans.knaw.nl"));
+        assertFalse("DANS pattern should not match VU email", Pattern.matches("^[^@]+@dans.knaw.nl$", "een.user@vu.nl"));
+    }
     /**
      * A user from an organisation for which no rules are defined should not match any rules.
      * @throws Exception
@@ -72,13 +86,16 @@ public class RuleExecutionSetTest {
 
         List<Rule> matchingRules = res.getMatchedRuleCondition(pthu, allRules);
         boolean pthuRuleFound = false;
+        boolean vuRuleFound = false;
         for (Rule r : matchingRules) {
             if (r.getDescription().equals("entitled PThU users")) {
                 pthuRuleFound = true;
+            } else if (r.getDescription().equals("all VU users")) {
+                vuRuleFound = true;
             }
         }
+        assertTrue("All VU users rule should match", vuRuleFound);
         assertFalse("PThU rule should not match", pthuRuleFound);
-
     }
 
     /**
@@ -127,7 +144,7 @@ public class RuleExecutionSetTest {
 
     }
 
-    private static Map<String, String> createUserProps(String lastName, String givenName, String prefix, String email,
+    private Map<String, String> createUserProps(String lastName, String givenName, String prefix, String email,
                                                        String orgName, String entitlement, String affiliation) {
         Map<String, String> props = new HashMap<String, String>();
         props.put(ATTR_NAME_SURNAME, lastName);
@@ -141,7 +158,7 @@ public class RuleExecutionSetTest {
         return props;
     }
 
-    static class TestRuleService implements RuleServiceLocal {
+    class TestRuleService implements RuleServiceLocal {
         List<Rule> allRules;
 
         public TestRuleService() {
