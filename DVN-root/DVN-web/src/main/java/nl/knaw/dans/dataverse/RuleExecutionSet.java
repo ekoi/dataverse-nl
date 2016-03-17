@@ -122,6 +122,7 @@ public class RuleExecutionSet {
 				searchedRules.add(rule);
 			} else {
 				boolean matchedcondition = false;
+				List<Boolean> machedconditions = new ArrayList<Boolean>();
 				for (RuleCondition rc : rcList) {
 					// Ex: rc.getAttributename() = entitlement (from the DB, column
 					// attribute_name)
@@ -130,18 +131,35 @@ public class RuleExecutionSet {
 					// (from the DB, column pattern)
 					Pattern pattern = Pattern.compile(rc.getPattern());
 					String attrValFromShib = shibProps.get(rc.getAttributename());
-					if ((attrValFromShib != null && !attrValFromShib.trim().equals("")) && pattern.matcher(attrValFromShib).matches()) {
-						matchedcondition = true;
-						break;
-					}
+					
+					if ((attrValFromShib != null && !attrValFromShib.trim().equals(""))) {
+						if (rc.getAttributename().equals("mail")) 
+							machedconditions.add(mailIsMatched(rc, pattern, attrValFromShib));
+						else
+							machedconditions.add(pattern.matcher(attrValFromShib).matches());
+					} else 
+						machedconditions.add(false);
 				} 	
 					
-				if (matchedcondition) {
+				if (!machedconditions.contains(false)) {
 					searchedRules.add(rule);
 				}
 			}
 		}
 		return searchedRules;
+	}
+
+	private boolean mailIsMatched(RuleCondition rc, Pattern pattern,
+			String attrValFromShib) {
+		// Multiple emails where delimited by ;
+		String mails[] = attrValFromShib.split(";");
+		for (String mail : mails) {
+			if (pattern.matcher(mail).matches()) {
+				return true;
+			}
+
+		}
+		return false;
 	}
 
 	private void save(VDCUser user, Rule searchedRule) {
