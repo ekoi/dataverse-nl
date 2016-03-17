@@ -24,3 +24,4 @@ doc/sphinx/build
 DVN-root/DVN-web/nb-configuration.xml
 .project
 .settings/
+.idea

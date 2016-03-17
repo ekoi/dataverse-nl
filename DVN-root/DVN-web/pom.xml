@@ -527,8 +527,14 @@
             <groupId>org.sqlite</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.6.16</version>
-        </dependency>        
-                                                                                                                                                                                                                                        
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

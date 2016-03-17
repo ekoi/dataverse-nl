@@ -46,7 +46,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     VDCNetworkServiceLocal vdcNetworkService;
     // ---
     
-    private final static Logger LOGGER = Logger.getLogger(FederativeLoginPage.class.getPackage().getName());
+    private final static Logger LOGGER = Logger.getLogger(FederativeLoginPage.class.getName());
     String refererUrl = "";
     private String errMessage = "";
     String userId = "";
@@ -63,8 +63,9 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     private String ATTR_NAME_PREFIX = "prefix";
     private String ATTR_NAME_GIVENNAME = "givenName";
     private String ATTR_NAME_ROLE = "eduPersonAffiliation";
-    private String ATTR_NAME_ORG = "schacHomeOrganization";
+    public static final String ATTR_NAME_ORG = "schacHomeOrganization";
     private String ATTR_NAME_PRINCIPAL = "eduPersonPrincipalName";
+    public static final String ATTR_NAME_ENTITLEMENT = "entitlement";
     
     /* Shibboleth attributes */
     private String SHIB_ATTR_NAME_EMAIL = "Shib_email";
@@ -74,6 +75,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     private String SHIB_ATTR_NAME_ROLE = "Shib_affiliation";//"eduPersonAffiliation";
     private String SHIB_ATTR_NAME_ORG = "Shib_HomeOrg";
     private String SHIB_ATTR_NAME_PRINCIPAL = "Shib_eduPersonPN";
+    private String SHIB_ATTR_NAME_ENTITLEMENT = "Shib_entitlement";
     
     private String ACL_ADMIN = null;
     private String ACL_CREATOR = null;
@@ -85,7 +87,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     private String USERID_PREFIX = "";
     private HashMap userdata = new HashMap();
     private Map<String, String> shibProps;
-    private String SHIB_PROPS_SESSION = "shibPropsSession";
+    public static final String SHIB_PROPS_SESSION = "shibPropsSession";
 
     /**
      * <p>Callback method that is called whenever a page is navigated to,
@@ -194,33 +196,20 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
                         final String forward = dvnLogin(user, studyId);
                         LOGGER.log(Level.INFO, "User forwarded to {0}", forward);
                         redirect = forward;
-                        /*
-                         * A user reported not being forwarded to the next page after logging in.
-                         * The logs show he (and others) should have been forwarded to /login/AccountTermsOfUsePage?faces-redirect=true
-                         * Ben assumes the redirect somehow stopped here (i.e. was not performed),
-                         *  because of the requirement of `forward.startsWith("/HomePage")`.
-                         * Put the check back in place.
-                         */
-                        if (forward != null && forward.startsWith("/HomePage")) {
-                            try {
-                                LOGGER.log(Level.INFO, "refererUrl + redirect = {0}", refererUrl + redirect);
+                        LOGGER.log(Level.INFO, "refererUrl: " + refererUrl + "\tforward: " + forward + "\tredirect: " + redirect);
+                        if (forward != null) {
+                        	if (forward.startsWith("/HomePage")) {
+                        		LOGGER.log(Level.INFO, "refererUrl + redirect = {0}", refererUrl + redirect);
                                 response.sendRedirect(refererUrl);
-                                //response.sendRedirect(refererUrl + redirect);
-                            	//response.sendRedirect(redirect); // `refererUrl + redirect`?!
-                            } catch (IOException ex) {
-                                errMessage = ex.toString();
-                                LOGGER.log(Level.SEVERE, null, ex);
-                            }
-                        } /* else {
+                        	} else {
+                        		LOGGER.log(Level.INFO, "refererUrl + redirect = {0}", refererUrl + redirect);
+                                response.sendRedirect(refererUrl + "/faces" + forward);
+                        	}
+                            
+                        } else {
                         	LOGGER.log(Level.SEVERE, "No forward location received or , sending user back to {0}.", refererUrl);
-                        	try {
-                                response.sendRedirect(refererUrl);
-                                //response.sendRedirect(refererUrl + redirect);
-                            } catch (IOException ex) {
-                                errMessage = ex.toString();
-                                LOGGER.log(Level.SEVERE, null, ex);
-                            }
-                        } */
+                            response.sendRedirect(refererUrl);
+                        }
                     } else {
                         loginFailed = true;
                         errMessage = "Admin access is not allowed using federated login";
@@ -585,7 +574,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
                 if (USERID_PREFIX != null) {
                     base = USERID_PREFIX + base;
                 }
-                String tuid = stripNonAlphaNum(base);
+                String tuid = base; //stripNonAlphaNum(base);
                 String xuid = tuid;
                 LOGGER.log(Level.INFO, "Base user id {0}.", tuid);
                 int n = 0;
@@ -677,6 +666,10 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     	//saml.attributes.principal=urn:mace:dir:attribute-def:eduPersonPrincipalName
     	if (request.getAttribute(SHIB_ATTR_NAME_PRINCIPAL) != null) {
     		shibAtt.put(ATTR_NAME_PRINCIPAL, (String)request.getAttribute(SHIB_ATTR_NAME_PRINCIPAL));
+    	}
+    	
+    	if (request.getAttribute(SHIB_ATTR_NAME_ENTITLEMENT) != null) {
+    		shibAtt.put(ATTR_NAME_ENTITLEMENT, (String)request.getAttribute(SHIB_ATTR_NAME_ENTITLEMENT));
     	}
     	
     	//TODO: Shouldn't be here. Very ugly coding
