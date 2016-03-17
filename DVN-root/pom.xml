@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.harvard.iq.dvn</groupId>
     <artifactId>DVN-root</artifactId>
-    <version>3.6.1</version>
+    <version>3.6.2-dans-14</version>
     <packaging>pom</packaging>
     <name>DVN-root</name>
     <modules>
         <module>DVN-web</module>
-  </modules>
+    </modules>
 
     <repositories>
 

@@ -4,12 +4,11 @@
     <parent>
         <artifactId>DVN-root</artifactId>
         <groupId>edu.harvard.iq.dvn</groupId>
-        <version>3.6.1</version>
+        <version>3.6.2-dans-14</version>
     </parent>
 
     <groupId>edu.harvard.iq.dvn</groupId>
     <artifactId>DVN-web</artifactId>
-    <version>3.6.1</version>
     <packaging>war</packaging>
     <name>DVN-web</name>
 
@@ -553,7 +552,7 @@
                 </includes>
             </resource>
         </resources>
-		<pluginManagement>
+        <pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
