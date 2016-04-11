@@ -336,7 +336,7 @@ public class FederativeAddAccountPage extends VDCBaseBean implements java.io.Ser
     		throw new RuntimeException("Username is empty.");
     	} else {
 	        //trying to set proper permissions
-	        String workflowusertype = getUsertype();
+	        String workflowusertype = "user";
 	
 	        Boolean doCreate = "user".equalsIgnoreCase(workflowusertype)
 	                || "creator".equalsIgnoreCase(workflowusertype)
