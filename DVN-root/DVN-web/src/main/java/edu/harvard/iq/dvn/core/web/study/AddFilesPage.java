@@ -1227,7 +1227,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
 //            fileTypes.add( new SelectItem("multizip", "Zip Archive (Multiple Files)"));
 //            fileTypes.add( new SelectItem("multitar", "Tar Archive (Multiple Files)"));
 //            fileTypes.add( new SelectItem("fits", "FITS file"));
-            fileTypes.add( new SelectItem("other", "Other") );
+            fileTypes.add( new SelectItem("other", "Any data type") );
         }
 
         return fileTypes;
