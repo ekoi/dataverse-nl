@@ -266,6 +266,8 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
             study = studyService.getStudy(studyId);
             studyVersion = study.getEditVersion();
 
+            selectFileType.setValue("other");
+            
             // determines labels already in use
             for (FileMetadata fmd : studyVersion.getFileMetadatas()) {
                 preexistingLabels.add(fmd.getLabel());
@@ -1199,7 +1201,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
             fileTypesNetwork = new SelectItem[1];
             //fileTypesOther = new SelectItem[1];
 
-            fileTypes.add( new SelectItem("", "Choose a Data Type", "", true) );
+//            fileTypes.add( new SelectItem("", "Choose a Data Type", "", true) );
 //            fileTypesSubsettable[0] = new SelectItem("por", "SPSS/POR");
 //            fileTypesSubsettable[1] = new SelectItem("sav", "SPSS/SAV");
 //            fileTypesSubsettable[2] = new SelectItem("dta", "Stata");
@@ -1225,7 +1227,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
 //            fileTypes.add( new SelectItem("multizip", "Zip Archive (Multiple Files)"));
 //            fileTypes.add( new SelectItem("multitar", "Tar Archive (Multiple Files)"));
 //            fileTypes.add( new SelectItem("fits", "FITS file"));
-            fileTypes.add( new SelectItem("other", "Other") );
+            fileTypes.add( new SelectItem("other", "Any data type") );
         }
 
         return fileTypes;
